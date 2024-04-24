@@ -1,0 +1,5 @@
+echo v4 => github.com/labstack/echo/v4
+viper => github.com/spf13/viper
+gorm => gorm.io/gorm & gorm.io/driver/postgres
+log => "github.com/sirupsen/logrus" & "gopkg.in/natefinch/lumberjack.v2"
+
