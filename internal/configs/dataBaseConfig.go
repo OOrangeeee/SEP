@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"SEP/internal/models/dataModels"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
@@ -27,4 +28,12 @@ func InitDB() {
 			"error": err,
 		}).Panic("Failed to connect to database")
 	}
+
+	err = DB.AutoMigrate(&dataModels.User{})
+	if err != nil {
+		Log.WithFields(logrus.Fields{
+			"error": err,
+		}).Panic("Failed to create User table")
+	}
+
 }
