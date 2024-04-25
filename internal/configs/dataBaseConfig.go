@@ -33,7 +33,7 @@ func InitDB() {
 	if err != nil {
 		Log.WithFields(logrus.Fields{
 			"error": err,
-		}).Panic("Failed to create User table")
+		}).Panic("创建用户表失败")
 	}
 
 }
