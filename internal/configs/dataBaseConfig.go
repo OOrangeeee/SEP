@@ -32,7 +32,8 @@ func InitDB() {
 	err = DB.AutoMigrate(&dataModels.User{})
 	if err != nil {
 		Log.WithFields(logrus.Fields{
-			"error": err,
+			"error":         err,
+			"error_message": "创建用户表失败",
 		}).Panic("创建用户表失败")
 	}
 
