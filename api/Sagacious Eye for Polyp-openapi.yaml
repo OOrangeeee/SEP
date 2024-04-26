@@ -5,6 +5,7 @@ info:
   version: 1.0.0
 tags:
   - name: User
+  - name: Security
   - name: Record
   - name: Feature
 paths:
@@ -264,6 +265,27 @@ paths:
                   summary: 异常示例
                   value:
                     error_message: 身份令牌错误或过期
+      security: []
+  /csrf-token:
+    get:
+      summary: 获取csrf token
+      deprecated: false
+      description: 用于一开始获取csrf token
+      tags:
+        - Security
+      parameters: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  在响应头里找到X-CSRF-Token:
+                    type: string
+                required:
+                  - 在响应头里找到X-CSRF-Token
       security: []
   /users/records-all:
     get:
