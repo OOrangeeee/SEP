@@ -4,3 +4,5 @@ database:
   dataBaseIp: "127.0.0.1"
   dataBasePort: "5432"
   dataBaseName: "sep"
+CSRF:
+  CookieSecure: false

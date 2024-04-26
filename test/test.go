@@ -2,42 +2,34 @@ package main
 
 import (
 	"SEP/internal/configs"
-	"SEP/internal/models/dataModels"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
+	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 func main() {
+	e := echo.New()
+	configs.InitLog()
 	configs.InitViper()
-	println(viper.GetString("database.dataBaseUserName"))
-	println(viper.GetString("database.dataBasePassword"))
-	println(viper.GetString("database.dataBaseIp"))
-	println(viper.GetString("database.dataBasePort"))
-	println(viper.GetString("database.dataBaseName"))
-
 	configs.InitDB()
+	configs.GetRouterConfig(e)
+	configs.PostRouterConfig(e)
+	configs.PutRouterConfig(e)
+	configs.DeleteRouterConfig(e)
+	configs.InitMiddleware(e)
+	configs.InitMiddleware(e)
+	e.GET("/api/csrf-token", func(c echo.Context) error {
+		// 从上下文中获取 CSRF 令牌
+		csrfToken := c.Get("csrf").(string)
 
-	err := configs.DB.AutoMigrate(&dataModels.User{})
-	if err != nil {
-		configs.Log.WithFields(logrus.Fields{
-			"error": err,
-		}).Panic("Failed to create table")
-	}
-
-	user := dataModels.User{
-		UserName:     "test1",
-		UserPassword: "test1p",
-		UserEmail:    "test1@example.com",
-		UserNickName: "test1Nick",
-	}
-
-	err = configs.DB.Create(&user).Error
-	if err != nil {
-		configs.Log.WithFields(logrus.Fields{
-			"error": err,
-		}).Error("Failed to create user")
-	}
-
-	println("User created")
-
+		// 将 CSRF 令牌作为响应头返回
+		c.Response().Header().Set("X-CSRF-Token", csrfToken)
+		return c.NoContent(http.StatusOK)
+	})
+	e.GET("/test", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+	e.POST("/test", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+	e.Logger.Fatal(e.Start(":714"))
 }

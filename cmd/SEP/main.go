@@ -10,6 +10,7 @@ func main() {
 	configs.InitLog()
 	configs.InitViper()
 	configs.InitDB()
+	configs.InitMiddleware(e)
 	configs.GetRouterConfig(e)
 	configs.PostRouterConfig(e)
 	configs.PutRouterConfig(e)
