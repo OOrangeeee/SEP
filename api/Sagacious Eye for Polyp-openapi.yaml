@@ -1,0 +1,1014 @@
+openapi: 3.0.1
+info:
+  title: Sagacious Eye for Polyp
+  description: ''
+  version: 1.0.0
+tags:
+  - name: User
+  - name: Record
+  - name: Feature
+paths:
+  /users/account:
+    get:
+      summary: 获取用户账户信息
+      deprecated: false
+      description: 通过用户ID获取用户账户信息
+      tags:
+        - User
+      parameters:
+        - name: Authorization
+          in: header
+          description: 用户验证身份的令牌
+          required: true
+          example: Bearer jdaidsihsdsahjkchsjkhdkash
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                  UserId:
+                    type: integer
+                    title: 用户id
+                    description: 每个用户对应的用户id
+                  UserName:
+                    type: string
+                    title: 用户名
+                    description: 唯一的用户名，类似于账号
+                  UserEmail:
+                    type: string
+                    title: 用户邮箱
+                    description: 用户邮箱，用于验证注册
+                  UserNickName:
+                    type: string
+                    title: 用户昵称
+                    description: 一个随意好听的名字
+                required:
+                  - success_message
+                  - UserId
+                  - UserName
+                  - UserEmail
+                  - UserNickName
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 成功获取用户信息
+                    UserId: 430000200210273860
+                    UserName: 2w4R5z
+                    UserEmail: g.jttxfhhr@kflqosk.dz
+        '401':
+          description: 没有权限
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 用户令牌过期或错误
+                required:
+                  - error_message
+      security: []
+    post:
+      summary: 注册用户账户
+      deprecated: false
+      description: 创建一个新的用户账户
+      tags:
+        - User
+      parameters: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                user-name:
+                  description: 用户名
+                  example: orange
+                  type: string
+                user-password:
+                  description: 用户密码，密码判断在前端做
+                  example: '123456'
+                  type: string
+                user-email:
+                  description: 用户邮箱
+                  example: 123@qq.com
+                  type: string
+                user-nickname:
+                  description: 用户昵称
+                  example: 晋晨曦
+                  type: string
+              required:
+                - user-name
+                - user-password
+                - user-email
+                - user-nickname
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                required:
+                  - success_message
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 注册成功，请前往邮箱激活
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户名已被注册
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户邮箱错误
+        '403':
+          description: 禁止访问
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 发送邮件太频繁，等待五分钟再试
+      security: []
+    put:
+      summary: 修改用户账户信息
+      deprecated: false
+      description: 通过用户ID修改用户账户信息，用户id从认证码中解析，无需传递
+      tags:
+        - User
+      parameters:
+        - name: Authorization
+          in: header
+          description: 令牌
+          required: true
+          example: Bearer sdhjksahdkash
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                user-nickname:
+                  description: 必须传递每个值，即使用户没有更改。没更改就传递原值
+                  example: 晋晨曦
+                  type: string
+                user-password:
+                  description: 用户密码
+                  example: hsjakhdka
+                  type: string
+              required:
+                - user-nickname
+                - user-password
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                required:
+                  - success_message
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 修改信息成功
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 参数不全
+        '401':
+          description: 没有权限
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 身份令牌错误或过期
+      security: []
+  /users/records-all:
+    get:
+      summary: 获取所有用户使用记录
+      deprecated: false
+      description: 通过用户ID获取该用户的所有使用记录
+      tags:
+        - Record
+      parameters:
+        - name: Authorization
+          in: header
+          description: 令牌
+          required: true
+          example: Bearer sdsadsadsadasdsa
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                  records:
+                    allOf:
+                      - &ref_0
+                        $ref: '#/components/schemas/RecordInfo'
+                      - *ref_0
+                      - *ref_0
+                required:
+                  - success_message
+                  - records
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 获取全部诊断信息成功
+                    records:
+                      '0':
+                        RecordId: 220000197602187680
+                        Date: '2013-01-30 20:33:32'
+                        Result: http://jamvmwxtd.tk/baj
+                        PatientName: Nancy Robinson
+        '401':
+          description: 没有权限
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 验证令牌过期或错误
+      security: []
+  /users/records/{recordsid}:
+    get:
+      summary: 获取用户使用记录
+      deprecated: false
+      description: 通过使用记录ID获取用户使用记录
+      tags:
+        - Record
+      parameters:
+        - name: recordsid
+          in: path
+          description: 使用记录id
+          required: true
+          example: '1'
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          description: 登录令牌
+          required: true
+          example: Bearer sdsuahdskhadkahsdui
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                  RecordId:
+                    type: integer
+                    description: 每个记录对应的id
+                    title: 记录id
+                  Date:
+                    type: string
+                    title: 检测时间
+                    description: 检测时间
+                  Result:
+                    type: string
+                    title: 结果
+                    description: 可能是图片或者视频的链接
+                  PatientName:
+                    type: string
+                    title: 患者姓名
+                    description: 患者姓名
+                required:
+                  - success_message
+                  - RecordId
+                  - Date
+                  - Result
+                  - PatientName
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 获取对应记录成功
+                    RecordId: 140000201710096930
+                    Date: '1970-12-31 13:48:41'
+                    Result: http://prtvzvad.sr/wfcbi
+                    PatientName: Paul Lee
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 参数错误
+        '401':
+          description: 没有权限
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 登录令牌错误或过期
+      security: []
+  /users/login:
+    post:
+      summary: 用户登录
+      deprecated: false
+      description: 用户通过用户名和密码登录
+      tags:
+        - User
+      parameters: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                user-name:
+                  description: 用户名
+                  example: orange
+                  type: string
+                user-password:
+                  description: 用户密码
+                  example: '123456'
+                  type: string
+              required:
+                - user-name
+                - user-password
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                  Authorization:
+                    type: string
+                    title: 验证令牌
+                    description: 验证令牌
+                required:
+                  - success_message
+                  - Authorization
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 登录成功
+                    Authorization: hsadhksahdjskahfsahduksagdua
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 密码错误
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户名不存在
+      security: []
+  /detection:
+    post:
+      summary: 进行检测
+      deprecated: false
+      description: 上传图片进行检测
+      tags:
+        - Feature
+      parameters:
+        - name: Authorization
+          in: header
+          description: 令牌
+          required: true
+          example: Bearer sdhkahdjkshadjkhsakjdhkas
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  format: binary
+                  type: string
+                  description: 图片
+              required:
+                - image
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                required:
+                  - success_message
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 检测成功，请前往记录查看结果
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 图片参数错误
+        '401':
+          description: 没有权限
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 令牌过期或错误
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 服务器运行bug，请联系管理员
+      security: []
+  /segmentation:
+    post:
+      summary: 进行分割
+      deprecated: false
+      description: 上传图片进行分割
+      tags:
+        - Feature
+      parameters:
+        - name: Authorization
+          in: header
+          description: 令牌
+          required: true
+          example: Bearer sdhkahdjkshadjkhsakjdhkas
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  format: binary
+                  type: string
+                  description: 图片
+              required:
+                - image
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                required:
+                  - success_message
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 分割成功，请前往记录查看结果
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 图片参数错误
+        '401':
+          description: 没有权限
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 令牌过期或错误
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 服务器运行bug，请联系管理员
+      security: []
+  /track:
+    post:
+      summary: 进行追踪
+      deprecated: false
+      description: 上传视频进行追踪
+      tags:
+        - Feature
+      parameters:
+        - name: Authorization
+          in: header
+          description: 令牌
+          required: true
+          example: Bearer sdhkahdjkshadjkhsakjdhkas
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                video:
+                  format: binary
+                  type: string
+                  description: 视频
+              required:
+                - video
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                required:
+                  - success_message
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 追踪成功，请前往记录查看结果
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 视频参数错误
+        '401':
+          description: 没有权限
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 令牌过期或错误
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 服务器运行bug，请联系管理员
+      security: []
+  /users/account/activation/{token}:
+    put:
+      summary: 激活用户账户
+      deprecated: false
+      description: 通过激活码激活用户账户
+      tags:
+        - User
+      parameters:
+        - name: token
+          in: path
+          description: 激活验证的唯一标识符
+          required: true
+          example: ashdjkshajdhjksahdkjas
+          schema:
+            type: string
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                required:
+                  - success_message
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 账户激活成功
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 验证令牌错误
+      security: []
+  /users/records/{recordid}:
+    delete:
+      summary: 删除使用记录
+      deprecated: false
+      description: 通过用户ID和使用记录ID删除用户使用记录
+      tags:
+        - Record
+      parameters:
+        - name: recordid
+          in: path
+          description: 记录id
+          required: true
+          example: '12'
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          description: 令牌
+          required: true
+          example: Bearer adsdhjkshadjkhaskjd
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                required:
+                  - success_message
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 删除成功
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 记录id与用户id不匹配
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 记录id不存在
+        '401':
+          description: 没有权限
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 身份令牌过期或错误
+      security: []
+components:
+  schemas:
+    RecordInfo:
+      type: object
+      properties:
+        RecordId:
+          type: integer
+          description: 每个记录对应的id
+          title: 记录id
+        Date:
+          type: string
+          title: 检测时间
+          description: 检测时间
+        Result:
+          type: string
+          title: 结果
+          description: 可能是图片或者视频的链接
+        PatientName:
+          type: string
+          title: 患者姓名
+          description: 患者姓名
+      required:
+        - RecordId
+        - Date
+        - Result
+        - PatientName
+    UserInfo:
+      type: object
+      properties:
+        UserId:
+          type: integer
+          title: 用户id
+          description: 每个用户对应的用户id
+        UserName:
+          type: string
+          title: 用户名
+          description: 唯一的用户名，类似于账号
+        UserEmail:
+          type: string
+          title: 用户邮箱
+          description: 用户邮箱，用于验证注册
+        UserNickName:
+          type: string
+          title: 用户昵称
+          description: 一个随意好听的名字
+      required:
+        - UserId
+        - UserName
+        - UserEmail
+        - UserNickName
+  securitySchemes: {}
+servers: []
