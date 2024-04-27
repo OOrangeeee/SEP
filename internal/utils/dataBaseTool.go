@@ -1,4 +1,4 @@
-package configs
+package utils
 
 import (
 	"SEP/internal/models/dataModels"
@@ -28,7 +28,7 @@ func InitDB() {
 			"error": err,
 		}).Panic("Failed to connect to database")
 	}
-
+	DB.Model(&dataModels.User{})
 	err = DB.AutoMigrate(&dataModels.User{})
 	if err != nil {
 		Log.WithFields(logrus.Fields{
@@ -36,5 +36,12 @@ func InitDB() {
 			"error_message": "创建用户表失败",
 		}).Panic("创建用户表失败")
 	}
-
+	DB.Model(&dataModels.UserEmail{})
+	err = DB.AutoMigrate(&dataModels.UserEmail{})
+	if err != nil {
+		Log.WithFields(logrus.Fields{
+			"error":         err,
+			"error_message": "创建用户邮箱表失败",
+		}).Panic("创建用户邮箱表失败")
+	}
 }
