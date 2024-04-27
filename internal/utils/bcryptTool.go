@@ -1,17 +1,18 @@
-package configs
+package utils
 
 import (
+	"SEP/internal/configs"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type encryptionTool struct {
+type EncryptionTool struct {
 }
 
-func (eT *encryptionTool) encryptPassword(password string) (string, error) {
+func (eT *EncryptionTool) EncryptPassword(password string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		Log.WithFields(logrus.Fields{
+		configs.Log.WithFields(logrus.Fields{
 			"error":         err,
 			"error_message": "密码加密失败",
 		}).Panic("密码加密失败")
@@ -19,7 +20,7 @@ func (eT *encryptionTool) encryptPassword(password string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-func (eT *encryptionTool) comparePassword(hashedPassword string, password string) bool {
+func (eT *EncryptionTool) ComparePassword(hashedPassword string, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	if err != nil {
 		return false
