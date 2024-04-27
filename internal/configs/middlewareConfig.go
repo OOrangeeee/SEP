@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"SEP/internal/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
@@ -18,7 +19,7 @@ func InitMiddleware(e *echo.Echo) {
 	logFileLocation := filepath.Join("./logs", "httpLog.log")
 	logFile, err := os.OpenFile(logFileLocation, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
-		Log.WithFields(logrus.Fields{
+		utils.Log.WithFields(logrus.Fields{
 			"error":         err,
 			"error_message": "打开httpLog文件失败",
 		}).Panic("打开httpLog文件失败")
@@ -30,7 +31,7 @@ func InitMiddleware(e *echo.Echo) {
 
 	//csrf
 	//配置文件区分开发和生产环境
-	cookieSecure := viper.GetBool("CSRF.CookieSecure")
+	cookieSecure := viper.GetBool("CSRF.cookieSecure")
 	csrfConfig := middleware.CSRFConfig{
 		TokenLookup:    "header:X-CSRF-Token",
 		CookiePath:     "/",
