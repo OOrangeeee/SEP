@@ -2,17 +2,19 @@ package main
 
 import (
 	"SEP/internal/configs"
+	"SEP/internal/utils"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
 	e := echo.New()
-	configs.InitLog()
+	utils.InitLog()
 	configs.InitViper()
-	configs.InitDB()
+	utils.InitDB()
 	configs.InitMiddleware(e)
 	configs.GetRouterConfig(e)
 	configs.PostRouterConfig(e)
 	configs.PutRouterConfig(e)
 	configs.DeleteRouterConfig(e)
+	e.Logger.Fatal(e.Start(":714"))
 }
