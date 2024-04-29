@@ -6,6 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetUserGetInfoController(c echo.Context) error {
+func UserGetInfoController(c echo.Context) error {
 	return services.GetUserInfoService(c)
 }
