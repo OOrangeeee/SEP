@@ -49,21 +49,6 @@ func UserLoginService(params map[string]string, c echo.Context) error {
 			"error_message": "密码错误",
 		})
 	}
-	/*token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["userID"] = user.ID
-	claims["isAdmin"] = user.UserIsAdmin
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	t, err := token.SignedString([]byte(viper.GetString("jwt.jwtSecret")))
-	if err != nil {
-		utils.Log.WithFields(logrus.Fields{
-			"error":         err,
-			"error_message": "生成Token失败",
-		}).Error("生成Token失败")
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"error_message": "生成Token失败",
-		})
-	}*/
 	t, err := jwtTool.GenerateLoginToken(user)
 	if err != nil {
 		utils.Log.WithFields(logrus.Fields{
