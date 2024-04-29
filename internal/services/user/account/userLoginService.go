@@ -3,9 +3,10 @@ package services
 import (
 	"SEP/internal/mappers"
 	"SEP/internal/utils"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func UserLoginService(params map[string]string, c echo.Context) error {
@@ -36,12 +37,12 @@ func UserLoginService(params map[string]string, c echo.Context) error {
 		utils.Log.WithFields(logrus.Fields{
 			"error_message": "用户不存在",
 		}).Error("用户不存在")
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
 			"error_message": "用户不存在",
 		})
 	}
 	user := users[0]
-	if encryptTool.ComparePassword(user.UserPassword, password) == false {
+	if !encryptTool.ComparePassword(user.UserPassword, password) {
 		utils.Log.WithFields(logrus.Fields{
 			"error_message": "密码错误",
 		}).Error("密码错误")
@@ -61,7 +62,7 @@ func UserLoginService(params map[string]string, c echo.Context) error {
 	}
 	csrfTool := utils.CSRFTool{}
 	getCSRF := csrfTool.SetCSRFToken(c)
-	if getCSRF == false {
+	if !getCSRF {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error_message": "CSRF Token 获取失败",
 		})

@@ -3,9 +3,10 @@ package services
 import (
 	"SEP/internal/mappers"
 	"SEP/internal/utils"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func ConfirmUserService(ActivationCode string, c echo.Context) error {
@@ -46,7 +47,7 @@ func ConfirmUserService(ActivationCode string, c echo.Context) error {
 	}
 	csrfTool := utils.CSRFTool{}
 	getCSRF := csrfTool.SetCSRFToken(c)
-	if getCSRF == false {
+	if !getCSRF {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error_message": "CSRF Token 获取失败",
 		})

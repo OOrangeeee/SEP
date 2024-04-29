@@ -5,14 +5,15 @@ import (
 	"SEP/internal/mappers"
 	"SEP/internal/models/dataModels"
 	"SEP/internal/utils"
-	"github.com/labstack/echo/v4"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"net/http"
 	"net/mail"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func RegisterUserService(paramMap map[string]string, c echo.Context) error {
@@ -199,7 +200,7 @@ func RegisterUserService(paramMap map[string]string, c echo.Context) error {
 	}).Info("用户注册成功")
 	csrfTool := utils.CSRFTool{}
 	getCSRF := csrfTool.SetCSRFToken(c)
-	if getCSRF == false {
+	if !getCSRF {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error_message": "CSRF Token 获取失败",
 		})
