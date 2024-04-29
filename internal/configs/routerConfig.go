@@ -3,11 +3,13 @@ package configs
 import (
 	securityCSRFControllers "SEP/internal/controllers/security/CSRF"
 	useAccountControllers "SEP/internal/controllers/user/account"
+
 	"github.com/labstack/echo/v4"
 )
 
 func GetRouterConfig(e *echo.Echo) {
-	e.GET("/users/account/:id", nil)
+	// 获取用户信息
+	e.GET("/users/account", useAccountControllers.GetUserGetInfoController)
 	e.GET("/users/records-all/:userid", nil)
 	e.GET("/users/records/:recordsid", nil)
 	// 获取CSRF Token
