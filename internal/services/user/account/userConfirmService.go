@@ -52,7 +52,7 @@ func ConfirmUserService(ActivationCode string, c echo.Context) error {
 			"error_message": "CSRF Token 获取失败",
 		})
 	}
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"success_message": "用户激活成功",
 	})
 }

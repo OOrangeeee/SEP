@@ -53,7 +53,7 @@ func UserUpdateNicknameService(paramMap map[string]string, c echo.Context) error
 			"error_message": "更新用户昵称失败",
 		})
 	}
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"success_message": "更新用户昵称成功",
 	})
 }
