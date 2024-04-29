@@ -12,4 +12,5 @@ type User struct {
 	UserNickName       string
 	UserIsActive       bool
 	UserActivationCode string `gorm:"unique"`
+	UserIsAdmin        bool
 }

@@ -11,5 +11,6 @@ func UserRegisterController(c echo.Context) error {
 	paramMap["userPassword"] = c.FormValue("user-password")
 	paramMap["userEmail"] = c.FormValue("user-email")
 	paramMap["userNickName"] = c.FormValue("user-nickname")
+	paramMap["userAdminSecret"] = c.FormValue("user-admin-secret")
 	return services.RegisterUserService(paramMap, c)
 }

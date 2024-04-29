@@ -1,7 +1,10 @@
 package configs
 
 import (
+	"SEP/internal/models/infoModels"
 	"SEP/internal/utils"
+	"github.com/dgrijalva/jwt-go"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
@@ -32,14 +35,38 @@ func InitMiddleware(e *echo.Echo) {
 	//csrf
 	//配置文件区分开发和生产环境
 	cookieSecure := viper.GetBool("CSRF.cookieSecure")
+	cookieHTTPOnly := viper.GetBool("CSRF.cookieHTTPOnly")
+	cookieMaxAge := viper.GetInt("CSRF.cookieMaxAge")
 	csrfConfig := middleware.CSRFConfig{
 		TokenLookup:    "header:X-CSRF-Token",
 		CookiePath:     "/",
 		CookieSecure:   cookieSecure,
-		CookieHTTPOnly: true,
+		CookieHTTPOnly: cookieHTTPOnly,
 		ContextKey:     "csrf",
-		CookieMaxAge:   60,
+		CookieMaxAge:   cookieMaxAge,
 	}
 	e.Use(middleware.CSRFWithConfig(csrfConfig))
 
+	//JWT
+	e.Use(echojwt.WithConfig(echojwt.Config{
+		Skipper: func(c echo.Context) bool {
+			if (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
+				return true
+			}
+			return false
+		},
+		SigningKey:  []byte(viper.GetString("jwt.jwtSecret")),
+		TokenLookup: "header:Authorization:Bearer ",
+		SuccessHandler: func(c echo.Context) {
+			user := c.Get("user").(*jwt.Token)
+			claims := user.Claims.(*infoModels.JwtCustomClaim)
+			utils.Log.WithFields(logrus.Fields{
+				"userId":          claims.UserId,
+				"isAdmin":         claims.IsAdmin,
+				"success_message": "用户登录成功",
+			}).Info("用户登录成功")
+			c.Set("userId", claims.UserId)
+			c.Set("isAdmin", claims.IsAdmin)
+		},
+	}))
 }
