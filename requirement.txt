@@ -1,0 +1,9 @@
+echo v4 => github.com/labstack/echo/v4
+viper => github.com/spf13/viper
+gorm => gorm.io/gorm & gorm.io/driver/postgres
+log => "github.com/sirupsen/logrus" & "gopkg.in/natefinch/lumberjack.v2"
+middleware => "github.com/labstack/echo/v4/middleware"
+bcrypt => golang.org/x/crypto/bcrypt
+gomail => gopkg.in/gomail.v2
+uuid => github.com/google/uuid
+jwt => github.com/golang-jwt/jwt/v5 & github.com/labstack/echo-jwt/v4
