@@ -2,9 +2,10 @@ openapi: 3.0.1
 info:
   title: Sagacious Eye for Polyp
   description: ''
-  version: 1.0.0
+  version: 1.1.0
 tags:
   - name: User
+  - name: Security
   - name: Record
   - name: Feature
 paths:
@@ -23,6 +24,13 @@ paths:
           example: Bearer jdaidsihsdsahjkchsjkhdkash
           schema:
             type: string
+        - name: X-Csrf-Token
+          in: header
+          description: CSRF防护
+          required: true
+          example: wadsadwada
+          schema:
+            type: string
       responses:
         '200':
           description: 成功
@@ -35,38 +43,25 @@ paths:
                     type: string
                     title: 成功信息
                     description: 成功信息
-                  UserId:
-                    type: integer
-                    title: 用户id
-                    description: 每个用户对应的用户id
-                  UserName:
-                    type: string
-                    title: 用户名
-                    description: 唯一的用户名，类似于账号
-                  UserEmail:
-                    type: string
-                    title: 用户邮箱
-                    description: 用户邮箱，用于验证注册
-                  UserNickName:
-                    type: string
-                    title: 用户昵称
-                    description: 一个随意好听的名字
+                  userInfo:
+                    $ref: '#/components/schemas/UserInfo'
+                    title: 用户信息
+                    description: 信息
                 required:
                   - success_message
-                  - UserId
-                  - UserName
-                  - UserEmail
-                  - UserNickName
+                  - userInfo
               examples:
                 '1':
                   summary: 成功示例
                   value:
-                    success_message: 成功获取用户信息
-                    UserId: 430000200210273860
-                    UserName: 2w4R5z
-                    UserEmail: g.jttxfhhr@kflqosk.dz
-        '401':
-          description: 没有权限
+                    success_message: 获取用户信息成功
+                    userInfo:
+                      UserName: XgOmk5
+                      UserEmail: k.ucrzy@baiemdqf.kh
+                      UserNickName: oRO]i
+                      UserIsAdmin: true
+        '404':
+          description: 记录不存在
           content:
             application/json:
               schema:
@@ -76,17 +71,54 @@ paths:
                   error_message:
                     type: string
                     title: 错误信息
-                    description: 用户令牌过期或错误
                 required:
                   - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户不存在
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息，用中文表示
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 获取用户信息失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
     post:
       summary: 注册用户账户
       deprecated: false
-      description: 创建一个新的用户账户
+      description: >-
+        创建一个新的用户账户，要求用户名全为大小写字母和数字，长度为6-20，密码长度在6-20，昵称长度在1-20，一个用户名只能用一次，一个邮箱只能注册一次。
+
+        如果是一个管理员用户，请给我user-admin-secret如果不是，不要发送这个字段
       tags:
         - User
-      parameters: []
+      parameters:
+        - name: X-Csrf-Token
+          in: header
+          description: ''
+          required: true
+          example: XUYqSvTDLcFwrQvhMZrEIKtaieKrcXgn
+          schema:
+            type: string
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -99,15 +131,19 @@ paths:
                   type: string
                 user-password:
                   description: 用户密码，密码判断在前端做
-                  example: '123456'
+                  example: bsbflsgxh..
                   type: string
                 user-email:
                   description: 用户邮箱
-                  example: 123@qq.com
+                  example: Jin0714@outlook.com
                   type: string
                 user-nickname:
                   description: 用户昵称
                   example: 晋晨曦
+                  type: string
+                user-admin-secret:
+                  description: 管理员密码
+                  example: sdsahkdjska
                   type: string
               required:
                 - user-name
@@ -132,7 +168,7 @@ paths:
                 '1':
                   summary: 成功示例
                   value:
-                    success_message: 注册成功，请前往邮箱激活
+                    success_message: 用户注册成功，请查收邮件激活账号
         '400':
           description: 请求有误
           content:
@@ -151,11 +187,39 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 用户名已被注册
+                    error_message: 管理员密钥错误
                 '2':
                   summary: 异常示例
                   value:
-                    error_message: 用户邮箱错误
+                    error_message: 用户注册参数不足
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户名长度不合法
+                '4':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户名只能包含字母和数字
+                '5':
+                  summary: 异常示例
+                  value:
+                    error_message: 密码长度不合法
+                '6':
+                  summary: 异常示例
+                  value:
+                    error_message: 邮箱格式不合法
+                '7':
+                  summary: 异常示例
+                  value:
+                    error_message: 昵称长度不合法
+                '8':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户名已存在
+                '9':
+                  summary: 异常示例
+                  value:
+                    error_message: 邮箱已存在
         '403':
           description: 禁止访问
           content:
@@ -167,103 +231,82 @@ paths:
                   error_message:
                     type: string
                     title: 错误信息
-                    description: 错误信息
+                    description: 错误信息，用中文表示
                 required:
                   - error_message
               examples:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 发送邮件太频繁，等待五分钟再试
+                    error_message: 邮件发送过于频繁，请等待五分钟再试
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  errpr_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息，用中文表示
+                required:
+                  - errpr_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    errpr_message: 用户注册失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    errpr_message: 密码加密失败
+                '3':
+                  summary: 异常示例
+                  value:
+                    errpr_message: 用户邮箱注册失败
+                '4':
+                  summary: 异常示例
+                  value:
+                    errpr_message: 邮件发送失败
+                '5':
+                  summary: 异常示例
+                  value:
+                    errpr_message: 查询用户邮箱失败
+                '6':
+                  summary: 异常示例
+                  value:
+                    errpr_message: 不存在当前邮箱
+                '7':
+                  summary: 异常示例
+                  value:
+                    errpr_message: 更新用户邮箱失败
+                '8':
+                  summary: 异常示例
+                  value:
+                    errpr_message: CSRF Token 获取失败
       security: []
-    put:
-      summary: 修改用户账户信息
+  /csrf-token:
+    get:
+      summary: 获取csrf token
       deprecated: false
-      description: 通过用户ID修改用户账户信息，用户id从认证码中解析，无需传递
+      description: 用于一开始获取csrf token
       tags:
-        - User
-      parameters:
-        - name: Authorization
-          in: header
-          description: 令牌
-          required: true
-          example: Bearer sdhjksahdkash
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                user-nickname:
-                  description: 必须传递每个值，即使用户没有更改。没更改就传递原值
-                  example: 晋晨曦
-                  type: string
-                user-password:
-                  description: 用户密码
-                  example: hsjakhdka
-                  type: string
-              required:
-                - user-nickname
-                - user-password
+        - Security
+      parameters: []
       responses:
-        '201':
+        '200':
           description: 成功
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  success_message:
+                  在响应头里找到X-CSRF-Token:
                     type: string
-                    title: 成功信息
-                    description: 成功信息
                 required:
-                  - success_message
-              examples:
-                '1':
-                  summary: 成功示例
-                  value:
-                    success_message: 修改信息成功
-        '400':
-          description: 请求有误
-          content:
-            application/json:
-              schema:
-                title: ''
-                type: object
-                properties:
-                  error_message:
-                    type: string
-                    title: 错误信息
-                    description: 错误信息
-                required:
-                  - error_message
-              examples:
-                '1':
-                  summary: 异常示例
-                  value:
-                    error_message: 参数不全
-        '401':
-          description: 没有权限
-          content:
-            application/json:
-              schema:
-                title: ''
-                type: object
-                properties:
-                  error_message:
-                    type: string
-                    title: 错误信息
-                    description: 错误信息
-                required:
-                  - error_message
-              examples:
-                '1':
-                  summary: 异常示例
-                  value:
-                    error_message: 身份令牌错误或过期
+                  - 在响应头里找到X-CSRF-Token
       security: []
   /users/records-all:
     get:
@@ -443,7 +486,14 @@ paths:
       description: 用户通过用户名和密码登录
       tags:
         - User
-      parameters: []
+      parameters:
+        - name: X-Csrf-Token
+          in: header
+          description: ''
+          required: true
+          example: "\tmrsnYbPWKFStwPegqplYxGQByPxybJkf"
+          schema:
+            type: string
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -456,36 +506,36 @@ paths:
                   type: string
                 user-password:
                   description: 用户密码
-                  example: '123456'
+                  example: bsbflsgxh..
                   type: string
               required:
                 - user-name
                 - user-password
       responses:
-        '201':
+        '200':
           description: 成功
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  token:
+                    type: string
+                    title: 验证令牌
+                    description: 验证令牌
                   success_message:
                     type: string
                     title: 成功信息
                     description: 成功信息
-                  Authorization:
-                    type: string
-                    title: 验证令牌
-                    description: 验证令牌
                 required:
                   - success_message
-                  - Authorization
+                  - token
               examples:
                 '1':
                   summary: 成功示例
                   value:
+                    token: plQtBl
                     success_message: 登录成功
-                    Authorization: hsadhksahdjskahfsahduksagdua
         '400':
           description: 请求有误
           content:
@@ -508,7 +558,53 @@ paths:
                 '2':
                   summary: 异常示例
                   value:
-                    error_message: 用户名不存在
+                    error_message: 用户名或密码为空
+        '404':
+          description: 记录不存在
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息，用中文表示
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户不存在
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息，用中文表示
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 查询用户失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 生成Token失败*
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
   /detection:
     post:
@@ -837,6 +933,13 @@ paths:
           example: ashdjkshajdhjksahdkjas
           schema:
             type: string
+        - name: X-Csrf-Token
+          in: header
+          description: CSRF
+          required: true
+          example: shkdhkahwdkhwa
+          schema:
+            type: string
       responses:
         '201':
           description: 成功
@@ -855,7 +958,7 @@ paths:
                 '1':
                   summary: 成功示例
                   value:
-                    success_message: 账户激活成功
+                    success_message: 用户激活成功
         '400':
           description: 请求有误
           content:
@@ -874,7 +977,286 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 验证令牌错误
+                    error_message: 激活码不存在
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户已激活
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息，用中文表示
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 数据库查询失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 数据库更新失败
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
+      security: []
+  /users/account/nickname:
+    put:
+      summary: 修改用户昵称
+      deprecated: false
+      description: 通过用户ID修改用户昵称，用户id从认证码中解析，无需传递
+      tags:
+        - User
+      parameters:
+        - name: Authorization
+          in: header
+          description: 令牌
+          required: true
+          example: Bearer sdhjksahdkash
+          schema:
+            type: string
+        - name: X-Csrf-Token
+          in: header
+          description: CSRF
+          required: true
+          example: ksjahdiwahdksah
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                user-nickname:
+                  description: 需要更改的值
+                  example: 晋晨曦
+                  type: string
+              required:
+                - user-nickname
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                required:
+                  - success_message
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 更新用户昵称成功
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 昵称不能为空
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 昵称长度不符合要求
+        '404':
+          description: 记录不存在
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息，用中文表示
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户不存在
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息，用中文表示
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 获取用户信息失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 更新用户昵称失败
+      security: []
+  /users/account/password:
+    put:
+      summary: 修改用户密码
+      deprecated: false
+      description: |-
+        通过用户ID修改用户昵称，用户id从认证码中解析，无需传递
+        你需要在前端做一些常规判断，例如让用户输入两次密码等等。
+      tags:
+        - User
+      parameters:
+        - name: Authorization
+          in: header
+          description: 令牌
+          required: true
+          example: Bearer sdhjksahdkash
+          schema:
+            type: string
+        - name: X-Csrf-Token
+          in: header
+          description: CSRF令牌
+          required: true
+          example: sahkdiwhadush
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                user-password:
+                  description: 需要更改的值
+                  example: safsfsadsa
+                  type: string
+              required:
+                - user-password
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success_message:
+                    type: string
+                    title: 成功信息
+                    description: 成功信息
+                required:
+                  - success_message
+              examples:
+                '1':
+                  summary: 成功示例
+                  value:
+                    success_message: 修改密码成功
+        '400':
+          description: 请求有误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 密码不能为空
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 密码长度不符合要求
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: 新密码与旧密码相同
+        '404':
+          description: 记录不存在
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 用户不存在
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    title: 错误信息
+                    description: 错误信息，用中文表示
+                required:
+                  - error_message
+              examples:
+                '1':
+                  summary: 异常示例
+                  value:
+                    error_message: 获取用户信息失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 密码加密失败
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: 更新用户信息失败
       security: []
   /users/records/{recordid}:
     delete:
@@ -989,10 +1371,6 @@ components:
     UserInfo:
       type: object
       properties:
-        UserId:
-          type: integer
-          title: 用户id
-          description: 每个用户对应的用户id
         UserName:
           type: string
           title: 用户名
@@ -1005,10 +1383,14 @@ components:
           type: string
           title: 用户昵称
           description: 一个随意好听的名字
+        UserIsAdmin:
+          type: boolean
+          title: 是否是管理员
+          description: 是否是管理员
       required:
-        - UserId
         - UserName
         - UserEmail
         - UserNickName
+        - UserIsAdmin
   securitySchemes: {}
 servers: []
