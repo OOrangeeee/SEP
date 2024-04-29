@@ -9,7 +9,7 @@ import (
 
 func GetRouterConfig(e *echo.Echo) {
 	// 获取用户信息
-	e.GET("/users/account", useAccountControllers.GetUserGetInfoController)
+	e.GET("/users/account", useAccountControllers.UserGetInfoController)
 	e.GET("/users/records-all/:userid", nil)
 	e.GET("/users/records/:recordsid", nil)
 	// 获取CSRF Token
@@ -29,7 +29,10 @@ func PostRouterConfig(e *echo.Echo) {
 }
 
 func PutRouterConfig(e *echo.Echo) {
-	e.PUT("/users/account", nil)
+	// 修改昵称
+	e.PUT("/users/account/nickname", useAccountControllers.UserUpdateNicknameController)
+	// 修改密码
+	e.PUT("/users/account/password", useAccountControllers.UserUpdatePasswordController)
 }
 
 func DeleteRouterConfig(e *echo.Echo) {
