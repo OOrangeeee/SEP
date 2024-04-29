@@ -3,7 +3,7 @@ package utils
 import (
 	"SEP/internal/models/dataModels"
 	"SEP/internal/models/infoModels"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
 	"time"
 )
@@ -11,10 +11,11 @@ import (
 type JwtTool struct{}
 
 func (j *JwtTool) GenerateLoginToken(user *dataModels.User) (string, error) {
+	expirationTime := jwt.NewNumericDate(time.Now().Add(time.Hour * 24))
 	claims := infoModels.JwtCustomClaim{
-		UserId:         user.ID,
-		IsAdmin:        user.UserIsAdmin,
-		StandardClaims: jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 24).Unix()},
+		UserId:           user.ID,
+		IsAdmin:          user.UserIsAdmin,
+		RegisteredClaims: jwt.RegisteredClaims{ExpiresAt: expirationTime},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	t, err := token.SignedString([]byte(viper.GetString("jwt.jwtSecret")))
