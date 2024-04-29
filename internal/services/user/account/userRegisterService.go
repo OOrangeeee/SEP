@@ -19,12 +19,23 @@ func RegisterUserService(paramMap map[string]string, c echo.Context) error {
 	userMapper := mappers.UserMapper{}
 	userEmailMapper := mappers.UserEmailMapper{}
 	encryptTool := utils.EncryptionTool{}
-	userName, userPassword, userEmail, userNickName := paramMap["userName"], paramMap["userPassword"], paramMap["userEmail"], paramMap["userNickName"]
+	userName, userPassword, userEmail, userNickName, userAdminSecret := paramMap["userName"], paramMap["userPassword"], paramMap["userEmail"], paramMap["userNickName"], paramMap["userAdminSecret"]
 	if userName == "" || userPassword == "" || userEmail == "" || userNickName == "" {
 		utils.Log.WithField("error_message", "用户注册参数不足").Error("用户注册参数不足")
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"error_message": "用户注册参数不足",
 		})
+	}
+	// 检查管理员密钥
+	userIsAdmin := false
+	if len(userAdminSecret) > 0 {
+		if userAdminSecret != viper.GetString("admin.adminSecret") {
+			utils.Log.WithField("error_message", "管理员密钥错误").Error("管理员密钥错误")
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"error_message": "管理员密钥错误",
+			})
+		}
+		userIsAdmin = true
 	}
 	hashedPassword, err := encryptTool.EncryptPassword(userPassword)
 	if err != nil {
@@ -32,6 +43,9 @@ func RegisterUserService(paramMap map[string]string, c echo.Context) error {
 			"error":         err,
 			"error_message": "密码加密失败",
 		}).Panic("密码加密失败")
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"error_message": "密码加密失败",
+		})
 	}
 	userName = strings.TrimSpace(userName)
 	// 检查用户名是否合法
@@ -90,6 +104,7 @@ func RegisterUserService(paramMap map[string]string, c echo.Context) error {
 		UserNickName:       userNickName,
 		UserIsActive:       false,
 		UserActivationCode: getUserActivationCode(),
+		UserIsAdmin:        userIsAdmin,
 	}
 	err = userMapper.AddNewUser(&newUser)
 	if err != nil {
