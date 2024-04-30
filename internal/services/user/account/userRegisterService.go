@@ -138,7 +138,7 @@ func RegisterUserService(paramMap map[string]string, c echo.Context) error {
 	// 检查邮件发送时间间隔
 	if userEmailMapper.IsUserEmailSendInTimeRange(userEmail) {
 		utils.Log.WithField("error_message", "邮件发送过于频繁").Error("邮件发送过于频繁")
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		return c.JSON(http.StatusForbidden, map[string]interface{}{
 			"error_message": "邮件发送过于频繁，请等待五分钟再试",
 		})
 	}
@@ -205,7 +205,7 @@ func RegisterUserService(paramMap map[string]string, c echo.Context) error {
 			"error_message": "CSRF Token 获取失败",
 		})
 	}
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"success_message": "用户注册成功，请查收邮件激活账号",
 	})
 }

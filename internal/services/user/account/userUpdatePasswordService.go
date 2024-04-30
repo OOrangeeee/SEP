@@ -12,7 +12,7 @@ import (
 func UserUpdatePassword(paramMap map[string]string, c echo.Context) error {
 	userMapper := mappers.UserMapper{}
 	entryptTool := utils.EncryptionTool{}
-	userID := c.Get("userID").(uint)
+	userID := c.Get("userId").(uint)
 	users, err := userMapper.GetUsersByUserId(userID)
 	if err != nil {
 		utils.Log.WithFields(logrus.Fields{
@@ -70,7 +70,7 @@ func UserUpdatePassword(paramMap map[string]string, c echo.Context) error {
 			"error_message": "更新用户信息失败",
 		})
 	}
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"succeed_message": "修改密码成功",
 	})
 }
