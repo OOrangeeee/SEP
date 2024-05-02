@@ -4,14 +4,17 @@ import (
 	featureControllers "SEP/internal/controllers/feature"
 	securityCSRFControllers "SEP/internal/controllers/security/CSRF"
 	useAccountControllers "SEP/internal/controllers/user/account"
+	recordControllers "SEP/internal/controllers/user/record"
 	"github.com/labstack/echo/v4"
 )
 
 func GetRouterConfig(e *echo.Echo) {
 	// 获取用户信息
 	e.GET("/users/account", useAccountControllers.UserGetInfoController)
-	e.GET("/users/records-all/:userid", nil)
-	e.GET("/users/records/:recordsid", nil)
+	// 获取用户记录
+	e.GET("/users/records-all", recordControllers.UserGetUserRecordsController)
+	// 获取用户记录
+	e.GET("/users/records/:recordsid", recordControllers.UserGetAUserRecordController)
 	// 获取CSRF Token
 	e.GET("/csrf-token", securityCSRFControllers.GetCSRFTokenController)
 	// 激活

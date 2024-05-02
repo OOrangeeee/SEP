@@ -29,13 +29,13 @@ func (rm *RecordMapper) GetAllRecords() ([]*dataModels.Record, error) {
 	return records, result.Error
 }
 
-func (rm *RecordMapper) GetRecordsByUserId(userId int) ([]*dataModels.Record, error) {
+func (rm *RecordMapper) GetRecordsByUserId(userId uint) ([]*dataModels.Record, error) {
 	var records []*dataModels.Record
 	result := utils.DB.Find(&records, "user_id=?", userId)
 	return records, result.Error
 }
 
-func (rm *RecordMapper) GetRecordById(recordId int) (*dataModels.Record, error) {
+func (rm *RecordMapper) GetRecordById(recordId uint) (*dataModels.Record, error) {
 	var record *dataModels.Record
 	result := utils.DB.First(&record, "id=?", recordId)
 	return record, result.Error
