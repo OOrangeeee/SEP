@@ -39,6 +39,34 @@ func DetectController(c echo.Context) error {
 	return services.DetectService(mapParams, c)
 }
 
+func SegmentController(c echo.Context) error {
+	file, err := c.FormFile("file")
+	if err != nil {
+		utils.Log.WithFields(logrus.Fields{
+			"error":         err,
+			"error_message": "文件上传失败",
+		}).Error("文件上传失败")
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"error_message": "文件上传失败",
+		})
+	}
+	patientName := c.FormValue("patient-name")
+	path, err := saveFileAndGetPath(file)
+	if err != nil {
+		utils.Log.WithFields(logrus.Fields{
+			"error":         err,
+			"error_message": "文件保存失败",
+		}).Error("文件保存失败")
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"error_message": "文件保存失败",
+		})
+	}
+	mapParams := make(map[string]string)
+	mapParams["source"] = path
+	mapParams["patientName"] = patientName
+	return services.SegmentService(mapParams, c)
+}
+
 func saveFileAndGetPath(file *multipart.FileHeader) (string, error) {
 	src, err := file.Open()
 	if err != nil {

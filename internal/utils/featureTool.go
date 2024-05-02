@@ -37,6 +37,10 @@ func (ft *FeatureTool) Detect(source string) (string, error) {
 	if result == "" {
 		return "", err
 	}
+	err = os.Remove(source)
+	if err != nil {
+		return "", err
+	}
 	return uploadTool.UploadImage(result)
 }
 
@@ -64,6 +68,10 @@ func (ft *FeatureTool) Segment(source string) (string, error) {
 	}
 	imageTool := ImageTool{}
 	err = imageTool.ChangeColorsAndOverlay(source, result)
+	if err != nil {
+		return "", err
+	}
+	err = os.Remove(source)
 	if err != nil {
 		return "", err
 	}
@@ -116,6 +124,10 @@ func (ft *FeatureTool) Track(source string) (string, error) {
 		return "", err
 	}
 	err = os.Remove(result)
+	if err != nil {
+		return "", err
+	}
+	err = os.Remove(source)
 	if err != nil {
 		return "", err
 	}

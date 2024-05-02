@@ -25,7 +25,8 @@ func PostRouterConfig(e *echo.Echo) {
 	e.POST("/users/login", useAccountControllers.UserLoginController)
 	// 检测
 	e.POST("/detection", featureControllers.DetectController)
-	e.POST("/segmentation", nil)
+	// 分割
+	e.POST("/segmentation", featureControllers.SegmentController)
 	e.POST("/track", nil)
 }
 
