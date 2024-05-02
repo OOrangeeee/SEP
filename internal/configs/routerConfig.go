@@ -1,9 +1,9 @@
 package configs
 
 import (
+	featureControllers "SEP/internal/controllers/feature"
 	securityCSRFControllers "SEP/internal/controllers/security/CSRF"
 	useAccountControllers "SEP/internal/controllers/user/account"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,9 +23,12 @@ func PostRouterConfig(e *echo.Echo) {
 	e.POST("/users/account", useAccountControllers.UserRegisterController)
 	// 登录
 	e.POST("/users/login", useAccountControllers.UserLoginController)
-	e.POST("/detection", nil)
-	e.POST("/segmentation", nil)
-	e.POST("/track", nil)
+	// 检测
+	e.POST("/detection", featureControllers.DetectController)
+	// 分割
+	e.POST("/segmentation", featureControllers.SegmentController)
+	// 跟踪
+	e.POST("/track", featureControllers.TrackController)
 }
 
 func PutRouterConfig(e *echo.Echo) {
