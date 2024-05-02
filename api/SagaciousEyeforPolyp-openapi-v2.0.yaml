@@ -2,13 +2,34 @@ openapi: 3.0.1
 info:
   title: Sagacious Eye for Polyp
   description: ''
-  version: 1.1.0
+  version: 2.0.0
 tags:
-  - name: User
   - name: Security
+  - name: User
   - name: Record
   - name: Feature
 paths:
+  /csrf-token:
+    get:
+      summary: 获取csrf token
+      deprecated: false
+      description: 用于一开始获取csrf token
+      tags:
+        - Security
+      parameters: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  在响应头里找到X-CSRF-Token:
+                    type: string
+                required:
+                  - 在响应头里找到X-CSRF-Token
+      security: []
   /users/account:
     get:
       summary: 获取用户账户信息
@@ -21,14 +42,16 @@ paths:
           in: header
           description: 用户验证身份的令牌
           required: true
-          example: Bearer jdaidsihsdsahjkchsjkhdkash
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc0FkbWluIjp0cnVlLCJVc2VySWQiOjEsImV4cCI6MTcxNDU1NzIwNn0.5dySrIAqcwhqWBgeRAmxNxXYjOLHDjedNI3nY7Sm5zk
           schema:
             type: string
         - name: X-Csrf-Token
           in: header
           description: CSRF防护
           required: true
-          example: wadsadwada
+          example: vuFWAJHXlasqvOeMHPWbgdWWYlZQmzsV
           schema:
             type: string
       responses:
@@ -287,27 +310,6 @@ paths:
                   value:
                     errpr_message: CSRF Token 获取失败
       security: []
-  /csrf-token:
-    get:
-      summary: 获取csrf token
-      deprecated: false
-      description: 用于一开始获取csrf token
-      tags:
-        - Security
-      parameters: []
-      responses:
-        '200':
-          description: 成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  在响应头里找到X-CSRF-Token:
-                    type: string
-                required:
-                  - 在响应头里找到X-CSRF-Token
-      security: []
   /users/records-all:
     get:
       summary: 获取所有用户使用记录
@@ -320,7 +322,16 @@ paths:
           in: header
           description: 令牌
           required: true
-          example: Bearer sdsadsadsadasdsa
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc0FkbWluIjp0cnVlLCJVc2VySWQiOjEsImV4cCI6MTcxNDczNDAyMX0.3dChuEtlzjHRgMnvRDc2u8m_tFokJav1rERFkUmcIDA
+          schema:
+            type: string
+        - name: X-Csrf-Token
+          in: header
+          description: ''
+          required: true
+          example: vuFWAJHXlasqvOeMHPWbgdWWYlZQmzsV
           schema:
             type: string
       responses:
@@ -348,15 +359,15 @@ paths:
                 '1':
                   summary: 成功示例
                   value:
-                    success_message: 获取全部诊断信息成功
+                    success_message: 获取用户记录成功
                     records:
-                      '0':
-                        RecordId: 220000197602187680
-                        Date: '2013-01-30 20:33:32'
-                        Result: http://jamvmwxtd.tk/baj
-                        PatientName: Nancy Robinson
-        '401':
-          description: 没有权限
+                      ID: '8'
+                      Url: s@Kgs9
+                      Type: ers
+                      TIme: '2007-08-16 17:21:34'
+                      PatientName: Ruth Hernandez
+        '500':
+          description: 服务器错误
           content:
             application/json:
               schema:
@@ -366,14 +377,14 @@ paths:
                   error_message:
                     type: string
                     title: 错误信息
-                    description: 错误信息
+                    description: 错误信息，用中文表示
                 required:
                   - error_message
               examples:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 验证令牌过期或错误
+                    error_message: 获取用户记录失败
       security: []
   /users/records/{recordsid}:
     get:
@@ -394,7 +405,16 @@ paths:
           in: header
           description: 登录令牌
           required: true
-          example: Bearer sdsuahdskhadkahsdui
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc0FkbWluIjp0cnVlLCJVc2VySWQiOjEsImV4cCI6MTcxNDczNTI0Mn0.IvsvVjkilG_XMzh8shD3HZFddEuyH7goCu2di2ZXAmg
+          schema:
+            type: string
+        - name: X-Csrf-Token
+          in: header
+          description: ''
+          required: true
+          example: vuFWAJHXlasqvOeMHPWbgdWWYlZQmzsV
           schema:
             type: string
       responses:
@@ -409,37 +429,21 @@ paths:
                     type: string
                     title: 成功信息
                     description: 成功信息
-                  RecordId:
-                    type: integer
-                    description: 每个记录对应的id
-                    title: 记录id
-                  Date:
-                    type: string
-                    title: 检测时间
-                    description: 检测时间
-                  Result:
-                    type: string
-                    title: 结果
-                    description: 可能是图片或者视频的链接
-                  PatientName:
-                    type: string
-                    title: 患者姓名
-                    description: 患者姓名
+                  record: *ref_0
                 required:
                   - success_message
-                  - RecordId
-                  - Date
-                  - Result
-                  - PatientName
+                  - record
               examples:
                 '1':
                   summary: 成功示例
                   value:
-                    success_message: 获取对应记录成功
-                    RecordId: 140000201710096930
-                    Date: '1970-12-31 13:48:41'
-                    Result: http://prtvzvad.sr/wfcbi
-                    PatientName: Paul Lee
+                    success_message: 获取用户记录成功
+                    record:
+                      ID: '59'
+                      Url: b2CS5
+                      Type: s29)h
+                      TIme: '2005-10-10 12:25:38'
+                      PatientName: Thomas Jones
         '400':
           description: 请求有误
           content:
@@ -458,9 +462,13 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 参数错误
-        '401':
-          description: 没有权限
+                    error_message: 记录id转换失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 缺少记录id
+        '500':
+          description: 服务器错误
           content:
             application/json:
               schema:
@@ -470,14 +478,14 @@ paths:
                   error_message:
                     type: string
                     title: 错误信息
-                    description: 错误信息
+                    description: 错误信息，用中文表示
                 required:
                   - error_message
               examples:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 登录令牌错误或过期
+                    error_message: 获取用户记录失败
       security: []
   /users/login:
     post:
@@ -491,7 +499,7 @@ paths:
           in: header
           description: ''
           required: true
-          example: "\tmrsnYbPWKFStwPegqplYxGQByPxybJkf"
+          example: MzKsrggfrWOnWnmDZLoGpfGaaWtvAmHj
           schema:
             type: string
       requestBody:
@@ -621,18 +629,32 @@ paths:
           example: Bearer sdhkahdjkshadjkhsakjdhkas
           schema:
             type: string
+        - name: X-Csrf-Token
+          in: header
+          description: ''
+          required: false
+          example: MzKsrggfrWOnWnmDZLoGpfGaaWtvAmHj
+          schema:
+            type: string
       requestBody:
         content:
           multipart/form-data:
             schema:
               type: object
               properties:
-                image:
+                file:
                   format: binary
                   type: string
                   description: 图片
+                  example: >-
+                    file://E:\go\workplace\src\SEP\ai\Polyp_detection\images\1.png
+                patient-name:
+                  description: 病人名字
+                  example: test
+                  type: string
               required:
-                - image
+                - file
+                - patient-name
       responses:
         '201':
           description: 成功
@@ -670,26 +692,7 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 图片参数错误
-        '401':
-          description: 没有权限
-          content:
-            application/json:
-              schema:
-                title: ''
-                type: object
-                properties:
-                  error_message:
-                    type: string
-                    title: 错误信息
-                    description: 错误信息
-                required:
-                  - error_message
-              examples:
-                '1':
-                  summary: 异常示例
-                  value:
-                    error_message: 令牌过期或错误
+                    error_message: 文件上传失败
         '500':
           description: 服务器错误
           content:
@@ -708,7 +711,19 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 服务器运行bug，请联系管理员
+                    error_message: 文件保存失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 检测失败
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: 记录保存失败
+                '4':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
   /segmentation:
     post:
@@ -722,7 +737,16 @@ paths:
           in: header
           description: 令牌
           required: true
-          example: Bearer sdhkahdjkshadjkhsakjdhkas
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc0FkbWluIjp0cnVlLCJVc2VySWQiOjEsImV4cCI6MTcxNDczMTkxNX0.xJQXiqqh-ToSJs2ZR2sx_Q5LyCZV9uS5qHMHZ6d99Z4
+          schema:
+            type: string
+        - name: X-Csrf-Token
+          in: header
+          description: ''
+          required: false
+          example: MzKsrggfrWOnWnmDZLoGpfGaaWtvAmHj
           schema:
             type: string
       requestBody:
@@ -731,12 +755,19 @@ paths:
             schema:
               type: object
               properties:
-                image:
+                file:
                   format: binary
                   type: string
                   description: 图片
+                  example: >-
+                    file://E:\go\workplace\src\SEP\ai\Polyp_detection\images\1.png
+                patient-name:
+                  description: 病人名字
+                  example: test
+                  type: string
               required:
-                - image
+                - file
+                - patient-name
       responses:
         '201':
           description: 成功
@@ -774,26 +805,7 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 图片参数错误
-        '401':
-          description: 没有权限
-          content:
-            application/json:
-              schema:
-                title: ''
-                type: object
-                properties:
-                  error_message:
-                    type: string
-                    title: 错误信息
-                    description: 错误信息
-                required:
-                  - error_message
-              examples:
-                '1':
-                  summary: 异常示例
-                  value:
-                    error_message: 令牌过期或错误
+                    error_message: 文件上传失败
         '500':
           description: 服务器错误
           content:
@@ -812,7 +824,19 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 服务器运行bug，请联系管理员
+                    error_message: 文件保存失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 分割失败
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: 记录保存失败
+                '4':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
   /track:
     post:
@@ -826,7 +850,16 @@ paths:
           in: header
           description: 令牌
           required: true
-          example: Bearer sdhkahdjkshadjkhsakjdhkas
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc0FkbWluIjp0cnVlLCJVc2VySWQiOjEsImV4cCI6MTcxNDczMjU5MX0.sh3e2D4sUyqnNpwMQObH23YDlORAx3KBdygVouygWro
+          schema:
+            type: string
+        - name: X-Csrf-Token
+          in: header
+          description: ''
+          required: true
+          example: MzKsrggfrWOnWnmDZLoGpfGaaWtvAmHj
           schema:
             type: string
       requestBody:
@@ -835,12 +868,18 @@ paths:
             schema:
               type: object
               properties:
-                video:
+                file:
                   format: binary
                   type: string
-                  description: 视频
+                  description: 图片
+                  example: file://E:\university\contest\life\out1\P1_0.mp4
+                patient-name:
+                  description: 病人名字
+                  example: test
+                  type: string
               required:
-                - video
+                - file
+                - patient-name
       responses:
         '201':
           description: 成功
@@ -878,26 +917,7 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 视频参数错误
-        '401':
-          description: 没有权限
-          content:
-            application/json:
-              schema:
-                title: ''
-                type: object
-                properties:
-                  error_message:
-                    type: string
-                    title: 错误信息
-                    description: 错误信息
-                required:
-                  - error_message
-              examples:
-                '1':
-                  summary: 异常示例
-                  value:
-                    error_message: 令牌过期或错误
+                    error_message: 文件上传失败
         '500':
           description: 服务器错误
           content:
@@ -916,7 +936,19 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 服务器运行bug，请联系管理员
+                    error_message: 文件保存失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: 追踪失败
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: 记录保存失败
+                '4':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
   /users/account/activation/{token}:
     put:
@@ -1022,14 +1054,16 @@ paths:
           in: header
           description: 令牌
           required: true
-          example: Bearer sdhjksahdkash
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc0FkbWluIjp0cnVlLCJVc2VySWQiOjEsImV4cCI6MTcxNDU1NzU4MX0.YrsKbMOvfORZSJSQX09d-MZxXpmpSjGa06Ssl1HwmU0
           schema:
             type: string
         - name: X-Csrf-Token
           in: header
           description: CSRF
           required: true
-          example: ksjahdiwahdksah
+          example: vuFWAJHXlasqvOeMHPWbgdWWYlZQmzsV
           schema:
             type: string
       requestBody:
@@ -1143,14 +1177,16 @@ paths:
           in: header
           description: 令牌
           required: true
-          example: Bearer sdhjksahdkash
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc0FkbWluIjp0cnVlLCJVc2VySWQiOjEsImV4cCI6MTcxNDU1NzU4MX0.YrsKbMOvfORZSJSQX09d-MZxXpmpSjGa06Ssl1HwmU0
           schema:
             type: string
         - name: X-Csrf-Token
           in: header
           description: CSRF令牌
           required: true
-          example: sahkdiwhadush
+          example: vuFWAJHXlasqvOeMHPWbgdWWYlZQmzsV
           schema:
             type: string
       requestBody:
@@ -1161,7 +1197,7 @@ paths:
               properties:
                 user-password:
                   description: 需要更改的值
-                  example: safsfsadsa
+                  example: bsbflsgxh..
                   type: string
               required:
                 - user-password
@@ -1270,19 +1306,28 @@ paths:
           in: path
           description: 记录id
           required: true
-          example: '12'
+          example: '2'
           schema:
             type: integer
         - name: Authorization
           in: header
           description: 令牌
           required: true
-          example: Bearer adsdhjkshadjkhaskjd
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc0FkbWluIjp0cnVlLCJVc2VySWQiOjEsImV4cCI6MTcxNDczNjA0OH0.2B_U-2qMwrL-oWfTA7Q85DnwCz8dBtl7B_WVJF8Q3s0
+          schema:
+            type: string
+        - name: X-Csrf-Token
+          in: header
+          description: ''
+          required: false
+          example: MzKsrggfrWOnWnmDZLoGpfGaaWtvAmHj
           schema:
             type: string
       responses:
-        '204':
-          description: 删除成功
+        '200':
+          description: 成功
           content:
             application/json:
               schema:
@@ -1298,7 +1343,7 @@ paths:
                 '1':
                   summary: 成功示例
                   value:
-                    success_message: 删除成功
+                    success_message: 删除记录成功
         '400':
           description: 请求有误
           content:
@@ -1317,13 +1362,17 @@ paths:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 记录id与用户id不匹配
+                    error_message: 缺少记录id
                 '2':
                   summary: 异常示例
                   value:
-                    error_message: 记录id不存在
-        '401':
-          description: 没有权限
+                    error_message: 获取记录失败
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: 记录id转换失败
+        '500':
+          description: 服务器错误
           content:
             application/json:
               schema:
@@ -1333,41 +1382,46 @@ paths:
                   error_message:
                     type: string
                     title: 错误信息
-                    description: 错误信息
+                    description: 错误信息，用中文表示
                 required:
                   - error_message
               examples:
                 '1':
                   summary: 异常示例
                   value:
-                    error_message: 身份令牌过期或错误
+                    error_message: 删除记录失败
       security: []
 components:
   schemas:
     RecordInfo:
       type: object
       properties:
-        RecordId:
-          type: integer
-          description: 每个记录对应的id
-          title: 记录id
-        Date:
+        ID:
           type: string
-          title: 检测时间
-          description: 检测时间
-        Result:
+          description: ID 编号
+          title: 记录id
+        Url:
           type: string
           title: 结果
-          description: 可能是图片或者视频的链接
+          description: 结果
+        Type:
+          type: string
+          title: 记录类型
+          description: 记录类型
+        TIme:
+          type: string
+          title: 时间
+          description: 时间
         PatientName:
           type: string
           title: 患者姓名
           description: 患者姓名
       required:
-        - RecordId
-        - Date
-        - Result
+        - Url
+        - Type
+        - TIme
         - PatientName
+        - ID
     UserInfo:
       type: object
       properties:
@@ -1393,4 +1447,6 @@ components:
         - UserNickName
         - UserIsAdmin
   securitySchemes: {}
-servers: []
+servers:
+  - url: http://localhost:714
+    description: 开发环境
