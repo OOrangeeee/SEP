@@ -41,3 +41,5 @@ config.yaml
 vendor/
 
 ai/
+
+uploads/

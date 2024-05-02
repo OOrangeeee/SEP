@@ -7,7 +7,7 @@ import (
 
 type Record struct {
 	gorm.Model
-	UserId      int
+	UserId      uint
 	URL         string
 	Type        string
 	Time        time.Time
