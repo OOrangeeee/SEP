@@ -35,7 +35,7 @@ func (rm *RecordMapper) GetRecordsByUserId(userId uint) ([]*dataModels.Record, e
 	return records, result.Error
 }
 
-func (rm *RecordMapper) GetRecordById(recordId int) (*dataModels.Record, error) {
+func (rm *RecordMapper) GetRecordById(recordId uint) (*dataModels.Record, error) {
 	var record *dataModels.Record
 	result := utils.DB.First(&record, "id=?", recordId)
 	return record, result.Error

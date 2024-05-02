@@ -13,7 +13,8 @@ func GetRouterConfig(e *echo.Echo) {
 	e.GET("/users/account", useAccountControllers.UserGetInfoController)
 	// 获取用户记录
 	e.GET("/users/records-all", recordControllers.UserGetUserRecordsController)
-	e.GET("/users/records/:recordsid", nil)
+	// 获取用户记录
+	e.GET("/users/records/:recordsid", recordControllers.UserGetAUserRecordController)
 	// 获取CSRF Token
 	e.GET("/csrf-token", securityCSRFControllers.GetCSRFTokenController)
 	// 激活
