@@ -6,6 +6,7 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/spf13/viper"
+	"os"
 )
 
 type UploadTool struct {
@@ -39,10 +40,10 @@ func (ut *UploadTool) UploadImage(imagePath string) (string, error) {
 	}
 	domain := viper.GetString("upload.qiniu.domain")
 	url := fmt.Sprintf("http://%s/%s", domain, key)
-	/*err = os.Remove(imagePath)
+	err = os.Remove(imagePath)
 	if err != nil {
 		return "", err
-	}*/
+	}
 	return url, nil
 }
 
@@ -74,9 +75,9 @@ func (ut *UploadTool) UploadVideo(videoPath string) (string, error) {
 	}
 	domain := viper.GetString("upload.qiniu.domain")
 	url := fmt.Sprintf("http://%s/%s", domain, key)
-	/*err = os.Remove()
+	err = os.Remove(videoPath)
 	if err != nil {
 		return "", err
-	}*/
+	}
 	return url, nil
 }

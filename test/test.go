@@ -19,4 +19,10 @@ func main() {
 		panic(err)
 	}
 	println(result)
+	result, err := featureTool.Track("E:\\university\\contest\\life\\out1\\P1_0.mp4")
+	if err != nil {
+		println(err.Error())
+		panic(err)
+	}
+	println(result)
 }
