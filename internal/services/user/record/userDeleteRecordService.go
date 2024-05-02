@@ -11,6 +11,7 @@ import (
 
 func DeleteRecordService(paramsMap map[string]string, c echo.Context) error {
 	recordMapper := mappers.RecordMapper{}
+	csrfTool := utils.CSRFTool{}
 	recordId := paramsMap["recordId"]
 	if recordId == "" {
 		utils.Log.WithField("error_message", "缺少记录id").Error("缺少记录id")
@@ -46,6 +47,12 @@ func DeleteRecordService(paramsMap map[string]string, c echo.Context) error {
 		}).Error("删除记录失败")
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error_message": "删除记录失败",
+		})
+	}
+	getCSRF := csrfTool.SetCSRFToken(c)
+	if !getCSRF {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"error_message": "CSRF Token 获取失败",
 		})
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{

@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: Sagacious Eye for Polyp
   description: ''
-  version: 2.0.0
+  version: 2.1.0
 tags:
   - name: Security
   - name: User
@@ -385,6 +385,10 @@ paths:
                   summary: 异常示例
                   value:
                     error_message: 获取用户记录失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
   /users/records/{recordsid}:
     get:
@@ -486,6 +490,10 @@ paths:
                   summary: 异常示例
                   value:
                     error_message: 获取用户记录失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
   /users/login:
     post:
@@ -1162,6 +1170,10 @@ paths:
                   summary: 异常示例
                   value:
                     error_message: 更新用户昵称失败
+                '3':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
   /users/account/password:
     put:
@@ -1293,6 +1305,10 @@ paths:
                   summary: 异常示例
                   value:
                     error_message: 更新用户信息失败
+                '4':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
   /users/records/{recordid}:
     delete:
@@ -1390,6 +1406,10 @@ paths:
                   summary: 异常示例
                   value:
                     error_message: 删除记录失败
+                '2':
+                  summary: 异常示例
+                  value:
+                    error_message: CSRF Token 获取失败
       security: []
 components:
   schemas:
