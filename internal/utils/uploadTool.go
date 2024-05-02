@@ -11,11 +11,12 @@ import (
 type UploadTool struct {
 }
 
-func (ut *UploadTool) UploadImage(imagePath string, id int) (string, error) {
+func (ut *UploadTool) UploadImage(imagePath string) (string, error) {
+	uuidTool := UUIDTool{}
 	accessKey := viper.GetString("upload.qiniu.accessKey")
 	secretKey := viper.GetString("upload.qiniu.secretKey")
 	bucket := viper.GetString("upload.qiniu.bucket")
-	key := "imageRecord" + fmt.Sprintf("%d", id)
+	key := "imageRecord" + "_" + uuidTool.GenerateUUID()
 	putPolicy := storage.PutPolicy{
 		Scope: bucket,
 	}
@@ -41,11 +42,12 @@ func (ut *UploadTool) UploadImage(imagePath string, id int) (string, error) {
 	return url, nil
 }
 
-func (ut *UploadTool) UploadVideo(videoPath string, id int) (string, error) {
+func (ut *UploadTool) UploadVideo(videoPath string) (string, error) {
+	uuidTool := UUIDTool{}
 	accessKey := viper.GetString("upload.qiniu.accessKey")
 	secretKey := viper.GetString("upload.qiniu.secretKey")
 	bucket := viper.GetString("upload.qiniu.bucket")
-	key := "videoRecord" + fmt.Sprintf("%d", id)
+	key := "videoRecord" + "_" + uuidTool.GenerateUUID()
 	putPolicy := storage.PutPolicy{
 		Scope: bucket,
 	}
