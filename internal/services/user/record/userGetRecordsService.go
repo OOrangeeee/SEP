@@ -11,6 +11,7 @@ import (
 )
 
 func GetUserRecordsService(c echo.Context) error {
+	csrfTool := utils.CSRFTool{}
 	recordMapper := mappers.RecordMapper{}
 	userId := c.Get("userId").(uint)
 	records, err := recordMapper.GetRecordsByUserId(userId)
@@ -35,6 +36,12 @@ func GetUserRecordsService(c echo.Context) error {
 		}
 		recordsInfo = append(recordsInfo, &recordInfo)
 	}
+	getCSRF := csrfTool.SetCSRFToken(c)
+	if !getCSRF {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"error_message": "CSRF Token 获取失败",
+		})
+	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"success_message": "获取用户记录成功",
 		"records":         recordsInfo,
@@ -42,6 +49,7 @@ func GetUserRecordsService(c echo.Context) error {
 }
 
 func GetAUserRecordService(paramsMap map[string]string, c echo.Context) error {
+	csrfTool := utils.CSRFTool{}
 	recordMapper := mappers.RecordMapper{}
 	recordId := paramsMap["recordId"]
 	recordIdInt, err := strconv.ParseUint(recordId, 10, 32)
@@ -70,6 +78,12 @@ func GetAUserRecordService(paramsMap map[string]string, c echo.Context) error {
 		Type:        record.Type,
 		Time:        record.Time,
 		PatientName: record.PatientName,
+	}
+	getCSRF := csrfTool.SetCSRFToken(c)
+	if !getCSRF {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"error_message": "CSRF Token 获取失败",
+		})
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"success_message": "获取用户记录成功",
