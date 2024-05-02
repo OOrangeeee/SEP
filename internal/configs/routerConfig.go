@@ -27,7 +27,8 @@ func PostRouterConfig(e *echo.Echo) {
 	e.POST("/detection", featureControllers.DetectController)
 	// 分割
 	e.POST("/segmentation", featureControllers.SegmentController)
-	e.POST("/track", nil)
+	// 跟踪
+	e.POST("/track", featureControllers.TrackController)
 }
 
 func PutRouterConfig(e *echo.Echo) {
