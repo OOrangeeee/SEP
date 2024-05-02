@@ -39,6 +39,10 @@ func (ut *UploadTool) UploadImage(imagePath string) (string, error) {
 	}
 	domain := viper.GetString("upload.qiniu.domain")
 	url := fmt.Sprintf("http://%s/%s", domain, key)
+	/*err = os.Remove(imagePath)
+	if err != nil {
+		return "", err
+	}*/
 	return url, nil
 }
 
@@ -70,5 +74,9 @@ func (ut *UploadTool) UploadVideo(videoPath string) (string, error) {
 	}
 	domain := viper.GetString("upload.qiniu.domain")
 	url := fmt.Sprintf("http://%s/%s", domain, key)
+	/*err = os.Remove()
+	if err != nil {
+		return "", err
+	}*/
 	return url, nil
 }

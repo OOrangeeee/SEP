@@ -38,6 +38,36 @@ func (ft *FeatureTool) Detect(source string) (string, error) {
 	return uploadTool.UploadImage(result)
 }
 
+func (ft *FeatureTool) Segment(source string) (string, error) {
+	uploadTool := UploadTool{}
+	cmd := exec.Command(
+		viper.GetString("feature.pythonPath"),
+		viper.GetString("feature.segment.segmentPath"),
+		"--model", viper.GetString("feature.segment.model"),
+		"--image", source,
+		"--result", viper.GetString("feature.segment.result"))
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+	err := cmd.Run()
+	if err != nil {
+		Log.WithFields(logrus.Fields{
+			"error":         err,
+			"error_message": "分割失败",
+		}).Error("分割失败")
+		return "", err
+	}
+	result, err := findLatestExpPngPath(viper.GetString("feature.segment.result"), "png")
+	if result == "" {
+		return "", err
+	}
+	imageTool := ImageTool{}
+	err = imageTool.ChangeColorsAndOverlay(source, result)
+	if err != nil {
+		return "", err
+	}
+	return uploadTool.UploadImage(result)
+}
+
 func findLatestExpPngPath(basePath, types string) (string, error) {
 	// 读取目录内容
 	entries, err := ioutil.ReadDir(basePath)
