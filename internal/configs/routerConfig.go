@@ -42,5 +42,6 @@ func PutRouterConfig(e *echo.Echo) {
 }
 
 func DeleteRouterConfig(e *echo.Echo) {
-	e.DELETE("/users/records", nil)
+	// 删除记录
+	e.DELETE("/users/records/:recordid", recordControllers.UserDeleteRecordController)
 }
