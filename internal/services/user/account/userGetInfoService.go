@@ -12,7 +12,6 @@ import (
 
 func GetUserInfoService(c echo.Context) error {
 	userMapper := mappers.UserMapper{}
-	csrfTool := utils.CSRFTool{}
 	userId := c.Get("userId").(uint)
 	isAdmin := c.Get("isAdmin").(bool)
 	users, err := userMapper.GetUsersByUserId(userId)
@@ -37,12 +36,6 @@ func GetUserInfoService(c echo.Context) error {
 		UserEmail:    user.UserEmail,
 		UserNickName: user.UserNickName,
 		UserIsAdmin:  isAdmin,
-	}
-	getCSRF := csrfTool.SetCSRFToken(c)
-	if !getCSRF {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"error_message": "CSRF Token 获取失败",
-		})
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"success_message": "获取用户信息成功",
