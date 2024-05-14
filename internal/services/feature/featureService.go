@@ -10,7 +10,6 @@ import (
 )
 
 func DetectService(paramsMap map[string]string, c echo.Context) error {
-	csrfTool := utils.CSRFTool{}
 	recordMapper := mappers.RecordMapper{}
 	userId := c.Get("userId").(uint)
 	source := paramsMap["source"]
@@ -49,19 +48,12 @@ func DetectService(paramsMap map[string]string, c echo.Context) error {
 			"error_message": "记录保存失败",
 		})
 	}
-	getCSRF := csrfTool.SetCSRFToken(c)
-	if !getCSRF {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"error_message": "CSRF Token 获取失败",
-		})
-	}
 	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"success_message": "检测成功，请前往记录查看结果",
 	})
 }
 
 func SegmentService(paramsMap map[string]string, c echo.Context) error {
-	csrfTool := utils.CSRFTool{}
 	recordMapper := mappers.RecordMapper{}
 	userId := c.Get("userId").(uint)
 	source := paramsMap["source"]
@@ -100,19 +92,12 @@ func SegmentService(paramsMap map[string]string, c echo.Context) error {
 			"error_message": "记录保存失败",
 		})
 	}
-	getCSRF := csrfTool.SetCSRFToken(c)
-	if !getCSRF {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"error_message": "CSRF Token 获取失败",
-		})
-	}
 	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"success_message": "分割成功，请前往记录查看结果",
 	})
 }
 
 func TrackService(paramsMap map[string]string, c echo.Context) error {
-	csrfTool := utils.CSRFTool{}
 	recordMapper := mappers.RecordMapper{}
 	userId := c.Get("userId").(uint)
 	source := paramsMap["source"]
@@ -149,12 +134,6 @@ func TrackService(paramsMap map[string]string, c echo.Context) error {
 		}).Error("记录保存失败")
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error_message": "记录保存失败",
-		})
-	}
-	getCSRF := csrfTool.SetCSRFToken(c)
-	if !getCSRF {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"error_message": "CSRF Token 获取失败",
 		})
 	}
 	return c.JSON(http.StatusCreated, map[string]interface{}{

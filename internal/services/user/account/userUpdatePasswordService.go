@@ -12,7 +12,6 @@ import (
 func UserUpdatePassword(paramMap map[string]string, c echo.Context) error {
 	userMapper := mappers.UserMapper{}
 	entryptTool := utils.EncryptionTool{}
-	csrfTool := utils.CSRFTool{}
 	userID := c.Get("userId").(uint)
 	users, err := userMapper.GetUsersByUserId(userID)
 	if err != nil {
@@ -69,12 +68,6 @@ func UserUpdatePassword(paramMap map[string]string, c echo.Context) error {
 		}).Error("更新用户信息失败")
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error_message": "更新用户信息失败",
-		})
-	}
-	getCSRF := csrfTool.SetCSRFToken(c)
-	if !getCSRF {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"error_message": "CSRF Token 获取失败",
 		})
 	}
 	return c.JSON(http.StatusCreated, map[string]interface{}{

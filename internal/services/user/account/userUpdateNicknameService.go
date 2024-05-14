@@ -11,7 +11,6 @@ import (
 
 func UserUpdateNicknameService(paramMap map[string]string, c echo.Context) error {
 	userMapper := mappers.UserMapper{}
-	csrfTool := utils.CSRFTool{}
 	userId := c.Get("userId").(uint)
 	users, err := userMapper.GetUsersByUserId(userId)
 	if err != nil {
@@ -52,12 +51,6 @@ func UserUpdateNicknameService(paramMap map[string]string, c echo.Context) error
 		}).Error("更新用户信息失败")
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error_message": "更新用户昵称失败",
-		})
-	}
-	getCSRF := csrfTool.SetCSRFToken(c)
-	if !getCSRF {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"error_message": "CSRF Token 获取失败",
 		})
 	}
 	return c.JSON(http.StatusCreated, map[string]interface{}{
