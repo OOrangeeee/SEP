@@ -5,6 +5,7 @@ import (
 	securityCSRFControllers "SEP/internal/controllers/security/CSRF"
 	useAccountControllers "SEP/internal/controllers/user/account"
 	recordControllers "SEP/internal/controllers/user/record"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,6 +20,8 @@ func GetRouterConfig(e *echo.Echo) {
 	e.GET("/csrf-token", securityCSRFControllers.GetCSRFTokenController)
 	// 激活
 	e.GET("/users/account/activation/:activationCode", useAccountControllers.UserConfirmController)
+	// 获取用户记录
+	e.GET("/users/records/patient", recordControllers.UserGetUserRecordsByPatientNameController)
 }
 
 func PostRouterConfig(e *echo.Echo) {
