@@ -31,6 +31,15 @@ func InitMiddleware(e *echo.Echo) {
 		Format: "time:${time_rfc3339}\nmethod:${method}\nuri:${uri}\nstatus:${status}\nerror:${error}\nhost:${host}\npath:${path}\n\n\n",
 	}))
 
+	//CORS
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:  []string{"*"},
+		AllowMethods:  []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
+		AllowHeaders:  []string{"*"},
+		ExposeHeaders: []string{"X-CSRF-Token"},
+		MaxAge:        3600,
+	}))
+
 	//csrf
 	//配置文件区分开发和生产环境
 	cookieSecure := viper.GetBool("CSRF.cookieSecure")
