@@ -36,6 +36,9 @@ package.json
 package-lock.json
 node_modules/
 
+web/node_modules/
+web/public/
+
 config.yaml
 
 vendor/
