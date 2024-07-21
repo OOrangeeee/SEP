@@ -1,9 +1,9 @@
 <template>
-  <div class="home-container">
+  <div class="home-container" :style="{ backgroundImage: `url(${image})` }">
     <button @click="goToImage" class="button1">返回</button>
     <button @click="openModal" class="button2">下载报告</button>
-    <button @click="goToDetail2" class="button3"></button>
-
+    <button @click="changeImage(1)" class="button3" v-if="recordList.length>1 && current<recordList.length-1"></button>
+    <button @click="changeImage(-1)" class="button4" v-if="current>0"></button>
     <!-- 模态框 -->
     <div class="modal" v-if="showModal">
       <div class="modal-content">
@@ -11,7 +11,7 @@
         <h2>患者信息</h2>
         <form @submit.prevent="submitForm">
           <input type="text" id="name" v-model="formData.name" style="height: 12px;" placeholder="姓名" required>
-          <input type="date" id="date" v-model="formData.date" style="height: 25px; width: 89%; 
+          <input type="date" id="date" v-model="formData.date" style="height: 25px; width: 89%;
 border-radius: 30px; margin-bottom: 10px; margin-top: 2px;" placeholder="就诊日期" required>
           <input type="text" id="symptom" v-model="formData.symptom" style="height: 12px;" placeholder="症状" required>
           <button type="submit" style="background-color: black; color: white; width: 22%;">下载</button>
@@ -22,16 +22,31 @@ border-radius: 30px; margin-bottom: 10px; margin-top: 2px;" placeholder="就诊�
 </template>
 
 <script>
+import {mapState} from "vuex"
 export default {
   data() {
     return {
+      current:0,
       showModal: false,
       formData: {
         name: '',
         date: '',
         symptom: ''
-      }
+      },
+      ids:[],
+      imageList:[]
     };
+  },
+  created() {
+    // 获取路由参数
+
+
+  },
+  computed:{
+    ...mapState(['recordList']),
+    image() {
+      return this.recordList[this.current].image || 'https://gimg3.baidu.com/search/src=http%3A%2F%2Fpics6.baidu.com%2Ffeed%2F8b82b9014a90f60358bb0a12d463f915b151edd8.jpeg%40f_auto%3Ftoken%3D9783ae81616a299fbf1dc89a939f49db&refer=http%3A%2F%2Fwww.baidu.com&app=2021&size=f360,240&n=0&g=0n&q=75&fmt=auto?sec=1720717200&t=6ee3e34f9a59c4e8291eaaf524414841';
+    }
   },
   methods: {
     goToImage() {
@@ -51,7 +66,11 @@ export default {
       // 这里可以将表单数据发送到服务器或执行其他操作
       // 然后关闭模态框
       this.closeModal();
+    },
+    changeImage (index) {
+      this.current = this.current+index
     }
+
   }
 };
 </script>
@@ -105,6 +124,17 @@ export default {
   background-color: rgba(0, 0, 0, 0); /* 使用透明色 */
   background-size: cover;
   left:60%;
+  position: absolute; /* 设置按钮为绝对定位 */
+}
+
+.button4 {
+  background-image: url('../../assets/arrow.png');
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0); /* 使用透明色 */
+  background-size: cover;
+  left:-40px;
+  transform: rotate(180deg);
   position: absolute; /* 设置按钮为绝对定位 */
 }
 button:hover {
