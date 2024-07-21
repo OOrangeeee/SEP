@@ -5,11 +5,17 @@
 </template>
 
 <script>
+import {GET_TOKEN} from "../../utils/token"
 export default {
   methods: {
     goToLogin() {
-      this.$router.push({path:"/login"})
+      if (!GET_TOKEN()) {
+        this.$router.push({path:"/login"})
+      }
     }
+  },
+  created() {
+
   }
 }
 </script>

@@ -5,11 +5,33 @@
 </template>
 
 <script>
+import {getRecordById} from "@/api";
+import {mapActions} from "vuex"
 export default {
   methods: {
+    ...mapActions(['setRecordList']),
     goToLogin() {
       this.$router.push({path:"/detail1"});
+    },
+    async initDetail() {
+      const promises = []
+      this.ids.forEach(id => {
+        promises.push(getRecordById(id))
+      })
+      // 获取病理图片
+      Promise.all(promises).then((values) => {
+          this.setRecordList(values)
+      })
     }
+  },
+  created() {
+    const id = this.$route.query.id;
+    if(!id) {
+
+      return this.$message.warning('请先选择报告')
+    }
+    this.ids = id.split(',')
+    this.initDetail()
   }
 }
 </script>
