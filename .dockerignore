@@ -1,0 +1,16 @@
+./testing.jpg
+requirement.txt
+./readme.md
+./LICENSE
+./.gitignore
+./web/
+./ai/
+./vendor/
+./uploads/
+./test/
+./scripts/
+./node_modules/
+./docs/
+./api/
+*.log
+!httpLog.log
