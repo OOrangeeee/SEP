@@ -46,7 +46,7 @@ func InitMiddleware(e *echo.Echo) {
 	cookieHTTPOnly := viper.GetBool("CSRF.cookieHTTPOnly")
 	cookieMaxAge := viper.GetInt("CSRF.cookieMaxAge")
 	csrfConfig := middleware.CSRFConfig{
-		TokenLookup:    "header:X-CSRF-Token",
+		TokenLookup:    "cookie:_csrf",
 		CookiePath:     "/",
 		CookieSecure:   cookieSecure,
 		CookieHTTPOnly: cookieHTTPOnly,
