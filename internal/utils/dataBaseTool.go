@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"time"
 )
 
 var DB *gorm.DB
@@ -23,10 +24,12 @@ func InitDB() {
 	dataBasePort = viper.GetString("database.dataBasePort")
 	var err error
 	DB, err = gorm.Open(postgres.Open("postgres://"+dataBaseUserName+":"+dataBasePassword+"@"+dataBaseIp+":"+dataBasePort+"/"+dataBaseName), &gorm.Config{})
-	if err != nil {
-		Log.WithFields(logrus.Fields{
-			"error": err,
-		}).Panic("Failed to connect to database")
+	cnt := 0
+	for err != nil && cnt < 50 {
+		println("数据库连接失败，正在重试")
+		DB, err = gorm.Open(postgres.Open("postgres://"+dataBaseUserName+":"+dataBasePassword+"@"+dataBaseIp+":"+dataBasePort+"/"+dataBaseName), &gorm.Config{})
+		cnt++
+		time.Sleep(time.Second)
 	}
 	DB.Model(&dataModels.User{})
 	err = DB.AutoMigrate(&dataModels.User{})
