@@ -15,11 +15,7 @@ import {getCsrf} from "./api/index"
 export default {
   name: 'App',
   // 在这里可以添加一些全局逻辑或生命周期钩子函数
-  async created() {
-   const result = await getCsrf()
-   console.log(result)
 
-  }
 }
 </script>
 

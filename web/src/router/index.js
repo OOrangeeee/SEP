@@ -16,6 +16,7 @@ import Doctor_report_loading from '../pages/doctor_report_loading/doctor_report_
 import Doctor_report_prompt from '../pages/doctor_report_prompt/doctor_report_prompt.vue';
 import Doctor_report_finish from '../pages/doctor_report_finish/doctor_report_finish.vue';
 import Doctor_report_generate from '../pages/doctor_report_generate/doctor_report_generate.vue';
+import active from "../pages/active/index.vue"
 import {Message} from "element-ui"
 import {GET_TOKEN} from "../utils/token"
 Vue.use(VueRouter);
@@ -106,6 +107,11 @@ let routes = [
     name: 'doctor_report_generate',
     component: Doctor_report_generate,
   },
+  {
+    path:'/user/account/activation/:token',
+    component: active
+  },
+
 ];
 
 const router = new VueRouter({
@@ -166,7 +172,7 @@ router.beforeEach( (to,from,next) =>{
     }else{
       //第一次会走到这个位置，然后重新触发路由钩子函数beforeEach,
       //当重新触发钩子函数的时候这时的to.path已经变为/login
-      if (to.path=='/home' || to.path == '/' || to.path == '/register') {
+      if (to.path == '/login' || to.path == '/register' || to.path == '/home' || to.path.startsWith('/user/account/activation/'))   {
         next()
       }else {
         next('/login')

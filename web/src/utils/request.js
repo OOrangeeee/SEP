@@ -10,7 +10,7 @@ const service = axios.create({
    headers: {
 
      'Content-Type': 'application/x-www-form-urlencoded',
-   
+
    }
 });
 
@@ -34,7 +34,8 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     if (response.config.url=='/csrf-token'){
-      SET_COOKIE(response.headers['x-csrf-token'])
+      debugger
+      SET_COOKIE(response.headers['set-cookie'])
     }
     // 对响应数据做处理，例如只返回data部分
     const res = response.data;
