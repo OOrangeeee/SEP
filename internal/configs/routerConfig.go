@@ -2,7 +2,7 @@ package configs
 
 import (
 	featureControllers "SEP/internal/controllers/feature"
-	securityCSRFControllers "SEP/internal/controllers/security/CSRF"
+	securityCSRFControllers "SEP/internal/controllers/security/csrf"
 	useAccountControllers "SEP/internal/controllers/user/account"
 	recordControllers "SEP/internal/controllers/user/record"
 

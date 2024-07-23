@@ -27,11 +27,11 @@ module.exports = {
       errors: true
     },
     proxy: {
-      '/api': {
-        target: 'http://192.168.83.1:714', // 目标跨域API地址
+      [process.env.VUE_APP_BASE_API]:{
+        target: process.env.VUE_APP_BASE_URL, // 目标跨域API地址
         changeOrigin: true, // 改变源地址，使得服务器代理的请求头中的host为目标地址
         pathRewrite: {
-          '^/api': '/' // 重写路径，去除/api
+          ['^' + process.env.VUE_APP_BASE_API]: '/' // 重写路径，去除/api
         }
       }
     }

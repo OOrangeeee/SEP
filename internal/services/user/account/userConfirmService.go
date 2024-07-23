@@ -3,7 +3,9 @@ package services
 import (
 	"SEP/internal/mappers"
 	"SEP/internal/utils"
+	"github.com/spf13/viper"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
@@ -45,7 +47,8 @@ func ConfirmUserService(ActivationCode string, c echo.Context) error {
 			"error_message": "数据库更新失败",
 		})
 	}
-	return c.JSON(http.StatusCreated, map[string]interface{}{
-		"success_message": "用户激活成功",
-	})
+	// 返回一个html页面
+	html := viper.GetString("Confirm.return")
+	html = strings.Replace(html, "{用户名}", user.UserName, -1)
+	return c.HTML(http.StatusOK, html)
 }

@@ -9,7 +9,7 @@ export const getUserInfo = (data) => request.get('/users/account',data) // 获�
 export const deleteRecord = (id) =>request.delete('/users/records/'+id) // 删除记录
 export const getRecords = (data) => request.get('/users/records-all',data) // 获取所有记录
 export const getRecordById = (id) => request.get('/users/records/'+id) // 获取记录
-export const activationUser = (token) =>request.put('/users/account/activation/'+token) // 激活用户
+export const activationUser = (token) =>request.get('/users/account/activation/'+token) // 激活用户
 export const getCsrf = () =>request.get('/csrf-token') // 获取csrf
 
 

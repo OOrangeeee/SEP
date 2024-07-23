@@ -5,7 +5,7 @@
     </div>
     <div class="right-panel">
       <form class="login-form">
-<!--        <img src="../../assets/loginbackground2.png" alt="Login Image" class="login-image2" />-->
+        <img  src="../../assets/loginbackground2.png" alt="Login Image" class="login-image2 login-form-bg" />
         <div class="login-box">
           <h2 style="color: white; margin-top: 0px;  font-size: 22px;">登录</h2>
           <form @submit.prevent="loginForm">
@@ -51,7 +51,7 @@ export default {
   methods: {
     ...mapActions(['setUserInfo']),
     async loginForm() {
-      
+
 
       if (!this.username) {
         return this.$message.warning('用户名不能为空')
@@ -64,14 +64,14 @@ export default {
         'user-name': this.username,
         'user-password': this.password
       };
-    
+
       const res = await login(requestBody)
       const {token} = res
       SET_TOKEN(token)
       this.$message.success('登录成功');
       await this.setUserInfo();
       this.$router.replace('/home')
-      
+
     },
     gotoRegister() {
       this.$router.push({ path: "/register" });
@@ -95,18 +95,19 @@ export default {
 
   text-align: center;
   width: 50%; /* 让左侧面板占50%宽度 */
+
+  height: 100vh; /* 让左侧面板占满整个视口高度 */
 }
 .login-image1 {
- width: 85%;
-  height: auto;
+  width: 100%;
+  height: calc(100vh - 10px);
 }
 .right-panel {
   flex: 1;
   text-align: center;
-  height: 700px;
+
   right: 0;
-  width:700px;
-  width: 50%; /* 让右侧面板占50%宽度 */
+  height: 100vh;
   position: relative; /* 设置相对定位 */
   z-index: 1; /* 确保背景在底部 */
   border: none; /* 设置边框为无 */
@@ -115,14 +116,11 @@ export default {
   justify-content: center;
 }
 .login-image2 {
-  //width: 90%; /* 设置背景图片宽度为100% */
-  //height: 90%; /* 设置背景图片高度为100% */
-  width: 70%;
-  //position: absolute; /* 设置绝对定位 */
-  top: -20px; /* 顶部对齐 */
-  right: -60px; /* 右侧对齐 */
-  z-index: -1; /* 确保背景在底部 */
-  border: none; /* 设置边框为无 */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top:0;
 }
 .login-box {
   margin: 0 auto; /* 让表单居中 */
@@ -177,13 +175,13 @@ export default {
   font-size: 12px;
 }
 .login-form{
-  background: url("../../assets/loginbackground2.png");
-  height: 890px;
+  height: 100%;
   width: 100%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-size: contain;
+
 }
 .form-group{
   margin-top: 20px;
