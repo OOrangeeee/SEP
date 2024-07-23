@@ -5,7 +5,7 @@
     </div>
     <div class="right-panel">
       <form class="login-form">
-        <!--        <img src="../../assets/loginbackground2.png" alt="Login Image" class="login-image2" />-->
+                <img src="../../assets/loginbackground2.png" alt="Login Image" class="login-image2" />
         <div class="login-box">
           <h2 style="color: white; margin-top: 0px;  font-size: 22px;">注册</h2>
           <form @submit.prevent="login">
@@ -83,7 +83,7 @@ export default {
   }
 };
 </script>
-<style >
+<style scoped>
 
 .login-container {
   display: flex;
@@ -96,18 +96,19 @@ export default {
 .left-panel {
 
   text-align: center;
-  width: 40%; /* 让左侧面板占50%宽度 */
+  width: 50%; /* 让左侧面板占50%宽度 */
+  height: 100vh;
 }
 .login-image1 {
   width: 100%;
-  height: auto;
+  height: calc(100% - 10px);
 }
 .right-panel {
   flex: 1;
   text-align: center;
-  height: 80%;
+
   right: 0;
-  width: 50%; /* 让右侧面板占50%宽度 */
+  height: 100vh;
   position: relative; /* 设置相对定位 */
   z-index: 1; /* 确保背景在底部 */
   border: none; /* 设置边框为无 */
@@ -116,14 +117,11 @@ export default {
   justify-content: center;
 }
 .login-image2 {
-  //width: 120%; /* 设置背景图片宽度为100% */
-  //height: 110%; /* 设置背景图片高度为100% */
+  position: absolute;
   width: 100%;
-  //position: absolute; /* 设置绝对定位 */
-  top: -20px; /* 顶部对齐 */
-  right: -60px; /* 右侧对齐 */
-  z-index: -1; /* 确保背景在底部 */
-  border: none; /* 设置边框为无 */
+  height: 100%;
+  left: 0;
+  top:0;
 }
 .login-box {
   margin: 0 auto; /* 让表单居中 */
@@ -178,14 +176,19 @@ export default {
   font-size: 12px;
 }
 .login-form{
-  background: url("../../assets/loginbackground2.png");
-  height: 900px;
+  height: 100%;
   width: 100%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+
 }
 .form-group{
   margin-top: 20px;
+}
+.operation{
+  cursor: pointer;
+  color: #fff;
 }
 </style>
