@@ -1,6 +1,6 @@
 services:
   app:
-    image: sep:local-V0.0.1
+    image: sep:online-V0.0.6
     ports:
       - "714:714"
     depends_on:
@@ -13,3 +13,9 @@ services:
       POSTGRES_DB: sep
     ports:
       - "5432:5432"
+  web:
+    image: sep-web:online-V0.0.9
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
