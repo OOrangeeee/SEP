@@ -14,7 +14,7 @@ services:
     ports:
       - "5432:5432"
   web:
-    image: sep-web:online-V0.0.9
+    image: sep-web:online-V0.1.2
     ports:
       - "8080:80"
     depends_on:
