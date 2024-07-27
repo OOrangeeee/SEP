@@ -46,6 +46,16 @@ config.yaml
 
 vendor/
 
-ai/
+ai/Polyp_detection/
+
+ai/Polyp-PVT-main/
+
+ai/StrongSORT-YOLO-main/.idea/
+ai/StrongSORT-YOLO-main/data/
+ai/StrongSORT-YOLO-main/MOT16_eval/
+ai/StrongSORT-YOLO-main/runs/
+ai/StrongSORT-YOLO-main/videos/
+ai/StrongSORT-YOLO-main/weights/
+ai/StrongSORT-YOLO-main/testing.jpg
 
 uploads/

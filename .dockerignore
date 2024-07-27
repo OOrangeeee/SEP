@@ -6,7 +6,6 @@ requirement.txt
 ./web/
 ./ai/
 ./vendor/
-./uploads/
 ./test/
 ./scripts/
 ./node_modules/

@@ -17,7 +17,7 @@ type FeatureTool struct {
 }
 
 func (ft *FeatureTool) Detect(source string) (string, error) {
-	uploadTool := UploadTool{}
+	//uploadTool := UploadTool{}
 	cmd := exec.Command(
 		viper.GetString("feature.pythonPath"),
 		viper.GetString("feature.detect.detectPath"),
@@ -41,11 +41,12 @@ func (ft *FeatureTool) Detect(source string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return uploadTool.UploadImage(result)
+	//return uploadTool.UploadImage(result)
+	return result, nil
 }
 
 func (ft *FeatureTool) Segment(source string) (string, error) {
-	uploadTool := UploadTool{}
+	//uploadTool := UploadTool{}
 	cmd := exec.Command(
 		viper.GetString("feature.pythonPath"),
 		viper.GetString("feature.segment.segmentPath"),
@@ -75,11 +76,12 @@ func (ft *FeatureTool) Segment(source string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return uploadTool.UploadImage(result)
+	//return uploadTool.UploadImage(result)
+	return result, nil
 }
 
 func (ft *FeatureTool) Track(source string) (string, error) {
-	uploadTool := UploadTool{}
+	//uploadTool := UploadTool{}
 	cmd := exec.Command(
 		viper.GetString("feature.pythonPath"),
 		viper.GetString("feature.track.trackPath"),
@@ -131,7 +133,8 @@ func (ft *FeatureTool) Track(source string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return uploadTool.UploadVideo(outPut)
+	//return uploadTool.UploadVideo(outPut)
+	return outPut, nil
 }
 
 func generateCopyPath(originalPath string) (string, error) {

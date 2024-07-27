@@ -2,7 +2,6 @@ package configs
 
 import (
 	featureControllers "SEP/internal/controllers/feature"
-	securityCSRFControllers "SEP/internal/controllers/security/csrf"
 	useAccountControllers "SEP/internal/controllers/user/account"
 	recordControllers "SEP/internal/controllers/user/record"
 
@@ -17,7 +16,7 @@ func GetRouterConfig(e *echo.Echo) {
 	// 获取用户记录
 	e.GET("/users/records/:recordsid", recordControllers.UserGetAUserRecordController)
 	// 获取CSRF Token
-	e.GET("/csrf-token", securityCSRFControllers.GetCSRFTokenController)
+	//e.GET("/csrf-token", securityCSRFControllers.GetCSRFTokenController)
 	// 激活
 	e.GET("/users/account/activation/:activationCode", useAccountControllers.UserConfirmController)
 	// 获取用户记录
