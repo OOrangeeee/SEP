@@ -22,6 +22,8 @@ FROM scratch
 
 WORKDIR /app
 
+COPY ./uploads/ ./uploads/
+
 # 从builder镜像中复制构建的二进制文件
 COPY --from=builder /app/main ./main
 

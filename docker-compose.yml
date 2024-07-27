@@ -1,6 +1,6 @@
 services:
   app:
-    image: sep:online-V0.0.6
+    image: sep:local-V0.0.9
     ports:
       - "714:714"
     depends_on:

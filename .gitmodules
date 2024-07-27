@@ -1,0 +1,3 @@
+[submodule "ai/StrongSORT-YOLO-main/yolov5"]
+	path = ai/StrongSORT-YOLO-main/yolov5
+	url = https://github.com/ultralytics/yolov5

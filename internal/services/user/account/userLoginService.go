@@ -50,6 +50,14 @@ func UserLoginService(params map[string]string, c echo.Context) error {
 			"error_message": "密码错误",
 		})
 	}
+	if user.UserIsActive == false {
+		utils.Log.WithFields(logrus.Fields{
+			"error_message": "用户未激活",
+		}).Error("用户未激活")
+		return c.JSON(http.StatusForbidden, map[string]interface{}{
+			"error_message": "用户未激活",
+		})
+	}
 	t, err := jwtTool.GenerateLoginToken(user)
 	if err != nil {
 		utils.Log.WithFields(logrus.Fields{
