@@ -31,13 +31,13 @@ func InitMiddleware(e *echo.Echo) {
 		Format: "time:${time_rfc3339}\nmethod:${method}\nuri:${uri}\nstatus:${status}\nerror:${error}\nhost:${host}\npath:${path}\n\n\n",
 	}))
 
-	//CORS
+	// CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:  []string{"*"},
-		AllowMethods:  []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
-		AllowHeaders:  []string{"*"},
-		ExposeHeaders: []string{"X-CSRF-Token"},
-		MaxAge:        3600,
+		AllowOrigins:     []string{"http://localhost:8080"},
+		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
+		AllowHeaders:     []string{"Authorization"},
+		MaxAge:           3600,
+		AllowCredentials: true,
 	}))
 
 	//csrf
