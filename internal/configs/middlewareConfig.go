@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"net/http"
 	"os"
 	"path/filepath"
 )
@@ -33,27 +34,31 @@ func InitMiddleware(e *echo.Echo) {
 
 	// CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"http://localhost:8080"},
-		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
-		AllowHeaders:     []string{"Authorization"},
-		MaxAge:           3600,
-		AllowCredentials: true,
+		AllowOrigins: []string{"http://localhost:8080"},
+		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
+		AllowHeaders: []string{"Authorization"},
+		MaxAge:       3600,
 	}))
 
 	//csrf
-	//配置文件区分开发和生产环境
-	cookieSecure := viper.GetBool("CSRF.cookieSecure")
-	cookieHTTPOnly := viper.GetBool("CSRF.cookieHTTPOnly")
-	cookieMaxAge := viper.GetInt("CSRF.cookieMaxAge")
 	csrfConfig := middleware.CSRFConfig{
-		TokenLookup:    "cookie:_csrf",
-		CookiePath:     "/",
-		CookieSecure:   cookieSecure,
-		CookieHTTPOnly: cookieHTTPOnly,
+		TokenLookup:    "header:X-CSRF-Token",
 		ContextKey:     "csrf",
-		CookieMaxAge:   cookieMaxAge,
+		CookieName:     "_csrf",
+		CookiePath:     "/",
+		CookieSecure:   false,
+		CookieHTTPOnly: true,
+		CookieSameSite: http.SameSiteStrictMode,
+		TokenLength:    32,
 	}
 	e.Use(middleware.CSRFWithConfig(csrfConfig))
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			token := c.Get("csrf").(string)
+			c.Response().Header().Add("X-Csrf-Token", token)
+			return next(c)
+		}
+	})
 
 	//JWT
 	e.Use(echojwt.WithConfig(echojwt.Config{
