@@ -17,7 +17,7 @@ func (ut *UploadTool) UploadImage(imagePath string) (string, error) {
 	accessKey := viper.GetString("upload.qiniu.accessKey")
 	secretKey := viper.GetString("upload.qiniu.secretKey")
 	bucket := viper.GetString("upload.qiniu.bucket")
-	key := "imageRecord" + "_" + uuidTool.GenerateUUID()
+	key := "images/imageRecord" + "_" + uuidTool.GenerateUUID() // 修改这里
 	putPolicy := storage.PutPolicy{
 		Scope: bucket,
 	}
@@ -31,7 +31,7 @@ func (ut *UploadTool) UploadImage(imagePath string) (string, error) {
 	ret := storage.PutRet{}
 	putExtra := storage.PutExtra{
 		Params: map[string]string{
-			"x:name": "测试文件",
+			"x:name": "诊断文件",
 		},
 	}
 	err := formUploader.PutFile(context.Background(), &ret, upToken, key, imagePath, &putExtra)
@@ -39,7 +39,7 @@ func (ut *UploadTool) UploadImage(imagePath string) (string, error) {
 		return "", err
 	}
 	domain := viper.GetString("upload.qiniu.domain")
-	url := fmt.Sprintf("http://%s/%s", domain, key)
+	url := fmt.Sprintf("https://%s/%s", domain, key)
 	err = os.Remove(imagePath)
 	if err != nil {
 		return "", err
@@ -52,7 +52,7 @@ func (ut *UploadTool) UploadVideo(videoPath string) (string, error) {
 	accessKey := viper.GetString("upload.qiniu.accessKey")
 	secretKey := viper.GetString("upload.qiniu.secretKey")
 	bucket := viper.GetString("upload.qiniu.bucket")
-	key := "videoRecord" + "_" + uuidTool.GenerateUUID()
+	key := "videos/videoRecord" + "_" + uuidTool.GenerateUUID()
 	putPolicy := storage.PutPolicy{
 		Scope: bucket,
 	}
@@ -66,7 +66,7 @@ func (ut *UploadTool) UploadVideo(videoPath string) (string, error) {
 	ret := storage.PutRet{}
 	putExtra := storage.PutExtra{
 		Params: map[string]string{
-			"x:name": "测试文件",
+			"x:name": "诊断视频",
 		},
 	}
 	err := formUploader.PutFile(context.Background(), &ret, upToken, key, videoPath, &putExtra)
@@ -74,7 +74,7 @@ func (ut *UploadTool) UploadVideo(videoPath string) (string, error) {
 		return "", err
 	}
 	domain := viper.GetString("upload.qiniu.domain")
-	url := fmt.Sprintf("http://%s/%s", domain, key)
+	url := fmt.Sprintf("https://%s/%s", domain, key)
 	err = os.Remove(videoPath)
 	if err != nil {
 		return "", err

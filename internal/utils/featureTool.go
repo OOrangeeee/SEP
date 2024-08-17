@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"io/ioutil"
@@ -17,7 +16,7 @@ type FeatureTool struct {
 }
 
 func (ft *FeatureTool) Detect(source string) (string, error) {
-	//uploadTool := UploadTool{}
+	uploadTool := UploadTool{}
 	cmd := exec.Command(
 		viper.GetString("feature.pythonPath"),
 		viper.GetString("feature.detect.detectPath"),
@@ -41,12 +40,11 @@ func (ft *FeatureTool) Detect(source string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	//return uploadTool.UploadImage(result)
-	return result, nil
+	return uploadTool.UploadImage(result)
 }
 
 func (ft *FeatureTool) Segment(source string) (string, error) {
-	//uploadTool := UploadTool{}
+	uploadTool := UploadTool{}
 	cmd := exec.Command(
 		viper.GetString("feature.pythonPath"),
 		viper.GetString("feature.segment.segmentPath"),
@@ -76,12 +74,11 @@ func (ft *FeatureTool) Segment(source string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	//return uploadTool.UploadImage(result)
-	return result, nil
+	return uploadTool.UploadImage(result)
 }
 
 func (ft *FeatureTool) Track(source string) (string, error) {
-	//uploadTool := UploadTool{}
+	uploadTool := UploadTool{}
 	cmd := exec.Command(
 		viper.GetString("feature.pythonPath"),
 		viper.GetString("feature.track.trackPath"),
@@ -90,7 +87,6 @@ func (ft *FeatureTool) Track(source string) (string, error) {
 		"--device", strconv.Itoa(viper.GetInt("feature.track.device")),
 		"--config-strongsort", viper.GetString("feature.track.config-strongsort"),
 		"--save-vid")
-	//println(cmd.String())
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 	err := cmd.Run()
@@ -101,43 +97,21 @@ func (ft *FeatureTool) Track(source string) (string, error) {
 		}).Error("跟踪失败")
 		return "", err
 	}
+	println("1")
 	result, err := findLatestExpPngPath(viper.GetString("feature.track.result"), "mp4")
 	if result == "" {
 		return "", err
 	}
-	outPut, err := generateCopyPath(result)
-	cmd2 := exec.Command(
-		"ffmpeg",
-		"-i", result,
-		"-vf", "scale=-2:720",
-		"-c:v", "libx264",
-		"-preset", "slow",
-		"-crf", "30",
-		outPut)
-	cmd2.Stdout = nil
-	cmd2.Stderr = nil
-	//println(cmd2.String())
-	err = cmd2.Run()
-	if err != nil {
-		Log.WithFields(logrus.Fields{
-			"error":         err,
-			"error_message": "转码失败",
-		}).Error("转码失败")
-		return "", err
-	}
-	err = os.Remove(result)
-	if err != nil {
-		return "", err
-	}
+	println("2")
+	//outPut, err := generateCopyPath(result)
 	err = os.Remove(source)
 	if err != nil {
 		return "", err
 	}
-	//return uploadTool.UploadVideo(outPut)
-	return outPut, nil
+	return uploadTool.UploadVideo(result)
 }
 
-func generateCopyPath(originalPath string) (string, error) {
+/*func generateCopyPath(originalPath string) (string, error) {
 	dir := filepath.Dir(originalPath)
 	ext := filepath.Ext(originalPath)
 	base := filepath.Base(originalPath)
@@ -145,7 +119,7 @@ func generateCopyPath(originalPath string) (string, error) {
 	newFilename := fmt.Sprintf("%s(copy)%s", base, ext)
 	newPath := filepath.Join(dir, newFilename)
 	return newPath, nil
-}
+}*/
 
 func findLatestExpPngPath(basePath, types string) (string, error) {
 	entries, err := ioutil.ReadDir(basePath)

@@ -34,15 +34,17 @@ func InitMiddleware(e *echo.Echo) {
 
 	// CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8080"},
-		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
-		AllowHeaders: []string{"Authorization"},
-		MaxAge:       3600,
+		AllowOrigins:     []string{"http://localhost:8080", "https://base.polypeye.cn", "http://base.polypeye.cn", "https://polypeye.cn", "http://polypeye.cn"},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
+		AllowHeaders:     []string{"Authorization", "Content-Type", "X-Csrf-Token", "Origin", "Accept"},
+		ExposeHeaders:    []string{"X-Csrf-Token"},
+		AllowCredentials: true,
+		MaxAge:           300,
 	}))
 
 	//csrf
 	csrfConfig := middleware.CSRFConfig{
-		TokenLookup:    "header:X-CSRF-Token",
+		TokenLookup:    "header:X-Csrf-Token",
 		ContextKey:     "csrf",
 		CookieName:     "_csrf",
 		CookiePath:     "/",
