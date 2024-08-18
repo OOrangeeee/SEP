@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"io/ioutil"
@@ -17,134 +16,111 @@ type FeatureTool struct {
 }
 
 func (ft *FeatureTool) Detect(source string) (string, error) {
-	//uploadTool := UploadTool{}
-	cmd := exec.Command(
-		viper.GetString("feature.pythonPath"),
-		viper.GetString("feature.detect.detectPath"),
-		"--weights", viper.GetString("feature.detect.weights"),
-		"--source", source)
-	cmd.Stdout = nil
-	cmd.Stderr = nil
-	err := cmd.Run()
-	if err != nil {
-		Log.WithFields(logrus.Fields{
-			"error":         err,
-			"error_message": "检测失败",
-		}).Error("检测失败")
-		return "", err
+	uploadTool := UploadTool{}
+	if viper.GetBool("feature.active") {
+		cmd := exec.Command(
+			viper.GetString("feature.pythonPath"),
+			viper.GetString("feature.detect.detectPath"),
+			"--weights", viper.GetString("feature.detect.weights"),
+			"--source", source)
+		cmd.Stdout = nil
+		cmd.Stderr = nil
+		err := cmd.Run()
+		if err != nil {
+			Log.WithFields(logrus.Fields{
+				"error":         err,
+				"error_message": "检测失败",
+			}).Error("检测失败")
+			return "", err
+		}
+		result, err := findLatestExpPngPath(viper.GetString("feature.detect.result"), "png")
+		if result == "" {
+			return "", err
+		}
+		err = os.Remove(source)
+		if err != nil {
+			return "", err
+		}
+		return uploadTool.UploadImage(result)
+	} else {
+		return uploadTool.UploadImage(source)
 	}
-	result, err := findLatestExpPngPath(viper.GetString("feature.detect.result"), "png")
-	if result == "" {
-		return "", err
-	}
-	err = os.Remove(source)
-	if err != nil {
-		return "", err
-	}
-	//return uploadTool.UploadImage(result)
-	return result, nil
 }
 
 func (ft *FeatureTool) Segment(source string) (string, error) {
-	//uploadTool := UploadTool{}
-	cmd := exec.Command(
-		viper.GetString("feature.pythonPath"),
-		viper.GetString("feature.segment.segmentPath"),
-		"--model", viper.GetString("feature.segment.model"),
-		"--image", source,
-		"--result", viper.GetString("feature.segment.result"))
-	cmd.Stdout = nil
-	cmd.Stderr = nil
-	err := cmd.Run()
-	if err != nil {
-		Log.WithFields(logrus.Fields{
-			"error":         err,
-			"error_message": "分割失败",
-		}).Error("分割失败")
-		return "", err
+	uploadTool := UploadTool{}
+	if viper.GetBool("feature.active") {
+		cmd := exec.Command(
+			viper.GetString("feature.pythonPath"),
+			viper.GetString("feature.segment.segmentPath"),
+			"--model", viper.GetString("feature.segment.model"),
+			"--image", source,
+			"--result", viper.GetString("feature.segment.result"))
+		cmd.Stdout = nil
+		cmd.Stderr = nil
+		err := cmd.Run()
+		if err != nil {
+			Log.WithFields(logrus.Fields{
+				"error":         err,
+				"error_message": "分割失败",
+			}).Error("分割失败")
+			return "", err
+		}
+		result, err := findLatestExpPngPath(viper.GetString("feature.segment.result"), "png")
+		if result == "" {
+			return "", err
+		}
+		imageTool := ImageTool{}
+		err = imageTool.ChangeColorsAndOverlay(source, result)
+		if err != nil {
+			return "", err
+		}
+		err = os.Remove(source)
+		if err != nil {
+			return "", err
+		}
+		return uploadTool.UploadImage(result)
+	} else {
+		return uploadTool.UploadImage(source)
 	}
-	result, err := findLatestExpPngPath(viper.GetString("feature.segment.result"), "png")
-	if result == "" {
-		return "", err
-	}
-	imageTool := ImageTool{}
-	err = imageTool.ChangeColorsAndOverlay(source, result)
-	if err != nil {
-		return "", err
-	}
-	err = os.Remove(source)
-	if err != nil {
-		return "", err
-	}
-	//return uploadTool.UploadImage(result)
-	return result, nil
 }
 
 func (ft *FeatureTool) Track(source string) (string, error) {
-	//uploadTool := UploadTool{}
-	cmd := exec.Command(
-		viper.GetString("feature.pythonPath"),
-		viper.GetString("feature.track.trackPath"),
-		"--source", source,
-		"--yolo-weights", viper.GetString("feature.track.yolo-weights"),
-		"--device", strconv.Itoa(viper.GetInt("feature.track.device")),
-		"--config-strongsort", viper.GetString("feature.track.config-strongsort"),
-		"--save-vid")
-	//println(cmd.String())
-	cmd.Stdout = nil
-	cmd.Stderr = nil
-	err := cmd.Run()
-	if err != nil {
-		Log.WithFields(logrus.Fields{
-			"error":         err,
-			"error_message": "跟踪失败",
-		}).Error("跟踪失败")
-		return "", err
+	uploadTool := UploadTool{}
+	if viper.GetBool("feature.active") {
+		cmd := exec.Command(
+			viper.GetString("feature.pythonPath"),
+			viper.GetString("feature.track.trackPath"),
+			"--source", source,
+			"--yolo-weights", viper.GetString("feature.track.yolo-weights"),
+			"--device", strconv.Itoa(viper.GetInt("feature.track.device")),
+			"--config-strongsort", viper.GetString("feature.track.config-strongsort"),
+			"--save-vid")
+		cmd.Stdout = nil
+		cmd.Stderr = nil
+		err := cmd.Run()
+		if err != nil {
+			Log.WithFields(logrus.Fields{
+				"error":         err,
+				"error_message": "跟踪失败",
+			}).Error("跟踪失败")
+			return "", err
+		}
+		println("1")
+		result, err := findLatestExpPngPath(viper.GetString("feature.track.result"), "mp4")
+		if result == "" {
+			return "", err
+		}
+		println("2")
+		//outPut, err := generateCopyPath(result)
+		err = os.Remove(source)
+		if err != nil {
+			return "", err
+		}
+		return uploadTool.UploadVideo(result)
+	} else {
+		return uploadTool.UploadVideo(source)
 	}
-	result, err := findLatestExpPngPath(viper.GetString("feature.track.result"), "mp4")
-	if result == "" {
-		return "", err
-	}
-	outPut, err := generateCopyPath(result)
-	cmd2 := exec.Command(
-		"ffmpeg",
-		"-i", result,
-		"-vf", "scale=-2:720",
-		"-c:v", "libx264",
-		"-preset", "slow",
-		"-crf", "30",
-		outPut)
-	cmd2.Stdout = nil
-	cmd2.Stderr = nil
-	//println(cmd2.String())
-	err = cmd2.Run()
-	if err != nil {
-		Log.WithFields(logrus.Fields{
-			"error":         err,
-			"error_message": "转码失败",
-		}).Error("转码失败")
-		return "", err
-	}
-	err = os.Remove(result)
-	if err != nil {
-		return "", err
-	}
-	err = os.Remove(source)
-	if err != nil {
-		return "", err
-	}
-	//return uploadTool.UploadVideo(outPut)
-	return outPut, nil
-}
-
-func generateCopyPath(originalPath string) (string, error) {
-	dir := filepath.Dir(originalPath)
-	ext := filepath.Ext(originalPath)
-	base := filepath.Base(originalPath)
-	base = base[:len(base)-len(ext)]
-	newFilename := fmt.Sprintf("%s(copy)%s", base, ext)
-	newPath := filepath.Join(dir, newFilename)
-	return newPath, nil
 }
 
 func findLatestExpPngPath(basePath, types string) (string, error) {

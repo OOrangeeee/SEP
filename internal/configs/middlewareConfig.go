@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"net/http"
 	"os"
 	"path/filepath"
 )
@@ -31,34 +32,50 @@ func InitMiddleware(e *echo.Echo) {
 		Format: "time:${time_rfc3339}\nmethod:${method}\nuri:${uri}\nstatus:${status}\nerror:${error}\nhost:${host}\npath:${path}\n\n\n",
 	}))
 
-	//CORS
+	// CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:  []string{"*"},
-		AllowMethods:  []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
-		AllowHeaders:  []string{"*"},
-		ExposeHeaders: []string{"X-CSRF-Token"},
-		MaxAge:        3600,
+		AllowOrigins:     []string{"https://base.polypeye.cn"},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
+		AllowHeaders:     []string{"Authorization", "Content-Type", "X-Csrf-Token", "Origin", "Accept"},
+		ExposeHeaders:    []string{"X-Csrf-Token"},
+		AllowCredentials: true,
+		MaxAge:           300,
 	}))
 
 	//csrf
-	//配置文件区分开发和生产环境
-	cookieSecure := viper.GetBool("CSRF.cookieSecure")
-	cookieHTTPOnly := viper.GetBool("CSRF.cookieHTTPOnly")
-	cookieMaxAge := viper.GetInt("CSRF.cookieMaxAge")
 	csrfConfig := middleware.CSRFConfig{
-		TokenLookup:    "cookie:_csrf",
-		CookiePath:     "/",
-		CookieSecure:   cookieSecure,
-		CookieHTTPOnly: cookieHTTPOnly,
+		Skipper: func(c echo.Context) bool {
+			if (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/users" && c.Request().Method == "DELETE") {
+				return true
+			}
+			return false
+		},
+		TokenLookup:    "header:X-Csrf-Token",
 		ContextKey:     "csrf",
-		CookieMaxAge:   cookieMaxAge,
+		CookieName:     "_csrf",
+		CookiePath:     "/",
+		CookieSecure:   true,
+		CookieHTTPOnly: true,
+		CookieSameSite: http.SameSiteNoneMode,
+		TokenLength:    32,
 	}
 	e.Use(middleware.CSRFWithConfig(csrfConfig))
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			csrfToken := c.Get("csrf")
+			if csrfToken != nil {
+				if token, ok := csrfToken.(string); ok && token != "" {
+					c.Response().Header().Add("X-Csrf-Token", token)
+				}
+			}
+			return next(c)
+		}
+	})
 
 	//JWT
 	e.Use(echojwt.WithConfig(echojwt.Config{
 		Skipper: func(c echo.Context) bool {
-			if (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
+			if (c.Path() == "/users" && c.Request().Method == "GET") || (c.Path() == "/users" && c.Request().Method == "DELETE") || (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
 				return true
 			}
 			return false
