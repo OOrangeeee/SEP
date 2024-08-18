@@ -143,7 +143,7 @@ func RegisterUserService(paramMap map[string]string, c echo.Context) error {
 		})
 	}
 	// 发送邮件
-	activationURL := viper.GetString("server.host") + "/users/account/activation/" + newUser.UserActivationCode
+	activationURL := viper.GetString("server.host") + "/sep/users/account/activation/" + newUser.UserActivationCode
 	mileTool := utils.MileTool{}
 	emailBody := viper.GetString("email.emailOfRegister.body")
 	emailBody = strings.Replace(emailBody, "{激活链接}", activationURL, -1)

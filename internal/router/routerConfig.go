@@ -1,11 +1,11 @@
-package configs
+package router
 
 import (
 	featureControllers "SEP/internal/controllers/feature"
 	securityCSRFControllers "SEP/internal/controllers/security/CSRF"
+	configControllers "SEP/internal/controllers/security/config"
 	useAccountControllers "SEP/internal/controllers/user/account"
 	recordControllers "SEP/internal/controllers/user/record"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -42,6 +42,8 @@ func PutRouterConfig(e *echo.Echo) {
 	e.PUT("/users/account/nickname", useAccountControllers.UserUpdateNicknameController)
 	// 修改密码
 	e.PUT("/users/account/password", useAccountControllers.UserUpdatePasswordController)
+	// 更新配置
+	e.PUT("/config", configControllers.ChangeConfig)
 }
 
 func DeleteRouterConfig(e *echo.Echo) {

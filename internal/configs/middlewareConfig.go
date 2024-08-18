@@ -44,6 +44,12 @@ func InitMiddleware(e *echo.Echo) {
 
 	//csrf
 	csrfConfig := middleware.CSRFConfig{
+		Skipper: func(c echo.Context) bool {
+			if c.Path() == "/config" && c.Request().Method == "PUT" {
+				return true
+			}
+			return false
+		},
 		TokenLookup:    "header:X-Csrf-Token",
 		ContextKey:     "csrf",
 		CookieName:     "_csrf",
@@ -56,8 +62,12 @@ func InitMiddleware(e *echo.Echo) {
 	e.Use(middleware.CSRFWithConfig(csrfConfig))
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			token := c.Get("csrf").(string)
-			c.Response().Header().Add("X-Csrf-Token", token)
+			csrfToken := c.Get("csrf")
+			if csrfToken != nil {
+				if token, ok := csrfToken.(string); ok && token != "" {
+					c.Response().Header().Add("X-Csrf-Token", token)
+				}
+			}
 			return next(c)
 		}
 	})
@@ -65,7 +75,7 @@ func InitMiddleware(e *echo.Echo) {
 	//JWT
 	e.Use(echojwt.WithConfig(echojwt.Config{
 		Skipper: func(c echo.Context) bool {
-			if (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
+			if (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
 				return true
 			}
 			return false
