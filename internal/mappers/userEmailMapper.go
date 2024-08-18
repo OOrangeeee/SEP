@@ -21,6 +21,11 @@ func (uem *UserEmailMapper) DeleteUserEmail(userEmail *dataModels.UserEmail) err
 	return result.Error
 }
 
+func (uem *UserEmailMapper) DeleteUnscopedUserEmail(userEmail *dataModels.UserEmail) error {
+	result := utils.DB.Unscoped().Delete(userEmail)
+	return result.Error
+}
+
 func (uem *UserEmailMapper) UpdateUserEmail(userEmail *dataModels.UserEmail) error {
 	result := utils.DB.Save(userEmail)
 	return result.Error

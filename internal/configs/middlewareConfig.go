@@ -34,7 +34,7 @@ func InitMiddleware(e *echo.Echo) {
 
 	// CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"http://localhost:8080", "https://base.polypeye.cn", "http://base.polypeye.cn", "https://polypeye.cn", "http://polypeye.cn"},
+		AllowOrigins:     []string{"https://base.polypeye.cn"},
 		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
 		AllowHeaders:     []string{"Authorization", "Content-Type", "X-Csrf-Token", "Origin", "Accept"},
 		ExposeHeaders:    []string{"X-Csrf-Token"},
@@ -45,7 +45,7 @@ func InitMiddleware(e *echo.Echo) {
 	//csrf
 	csrfConfig := middleware.CSRFConfig{
 		Skipper: func(c echo.Context) bool {
-			if c.Path() == "/config" && c.Request().Method == "PUT" {
+			if (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/users" && c.Request().Method == "DELETE") {
 				return true
 			}
 			return false
@@ -54,9 +54,9 @@ func InitMiddleware(e *echo.Echo) {
 		ContextKey:     "csrf",
 		CookieName:     "_csrf",
 		CookiePath:     "/",
-		CookieSecure:   false,
+		CookieSecure:   true,
 		CookieHTTPOnly: true,
-		CookieSameSite: http.SameSiteStrictMode,
+		CookieSameSite: http.SameSiteNoneMode,
 		TokenLength:    32,
 	}
 	e.Use(middleware.CSRFWithConfig(csrfConfig))
@@ -75,7 +75,7 @@ func InitMiddleware(e *echo.Echo) {
 	//JWT
 	e.Use(echojwt.WithConfig(echojwt.Config{
 		Skipper: func(c echo.Context) bool {
-			if (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
+			if (c.Path() == "/users" && c.Request().Method == "DELETE") || (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
 				return true
 			}
 			return false

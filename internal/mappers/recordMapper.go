@@ -23,6 +23,11 @@ func (rm *RecordMapper) UpdateRecord(record *dataModels.Record) error {
 	return result.Error
 }
 
+func (rm *RecordMapper) DeleteUnscopedRecord(record *dataModels.Record) error {
+	result := utils.DB.Unscoped().Delete(record)
+	return result.Error
+}
+
 func (rm *RecordMapper) GetAllRecords() ([]*dataModels.Record, error) {
 	var records []*dataModels.Record
 	result := utils.DB.Find(&records)
@@ -51,4 +56,9 @@ func (rm *RecordMapper) GetRecordsByPatientName(patientName string) ([]*dataMode
 	var records []*dataModels.Record
 	result := utils.DB.Find(&records, "patient_name=?", patientName)
 	return records, result.Error
+}
+
+func (rm *RecordMapper) DeleteRecordsByUserId(userId uint) error {
+	result := utils.DB.Unscoped().Where("user_id = ?", userId).Delete(&dataModels.Record{})
+	return result.Error
 }
