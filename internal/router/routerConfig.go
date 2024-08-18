@@ -22,6 +22,8 @@ func GetRouterConfig(e *echo.Echo) {
 	e.GET("/users/account/activation/:activationCode", useAccountControllers.UserConfirmController)
 	// 获取用户记录
 	e.GET("/users/records/patient", recordControllers.UserGetUserRecordsByPatientNameController)
+	// 获取用户数量
+	e.GET("/users", useAccountControllers.UserGetCountController)
 }
 
 func PostRouterConfig(e *echo.Echo) {

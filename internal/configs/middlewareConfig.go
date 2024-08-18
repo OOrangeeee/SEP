@@ -75,7 +75,7 @@ func InitMiddleware(e *echo.Echo) {
 	//JWT
 	e.Use(echojwt.WithConfig(echojwt.Config{
 		Skipper: func(c echo.Context) bool {
-			if (c.Path() == "/users" && c.Request().Method == "DELETE") || (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
+			if (c.Path() == "/users" && c.Request().Method == "GET") || (c.Path() == "/users" && c.Request().Method == "DELETE") || (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
 				return true
 			}
 			return false
