@@ -80,7 +80,9 @@ func InitMiddleware(e *echo.Echo) {
 			}
 			return false
 		},
-		SigningKey:  []byte(viper.GetString("jwt.jwtSecret")),
+		SigningKey: func(c echo.Context) interface{} {
+			return []byte(viper.GetString("jwt.jwtSecret"))
+		},
 		TokenLookup: "header:Authorization:Bearer ",
 		SuccessHandler: func(c echo.Context) {
 			user := c.Get("user").(*jwt.Token)
