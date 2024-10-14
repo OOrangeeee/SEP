@@ -77,6 +77,9 @@ func InitMiddleware(e *echo.Echo, jwtSecret string) {
 			if (c.Path() == "/users" && c.Request().Method == "GET") || (c.Path() == "/users" && c.Request().Method == "DELETE") || (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
 				return true
 			}
+			utils.Log.WithFields(logrus.Fields{
+				"jwtSecret": jwtSecret,
+			}).Info("JWT中间件启用")
 			return false
 		},
 		SigningKey:  jwtSecret,
