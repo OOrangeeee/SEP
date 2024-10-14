@@ -34,7 +34,7 @@ func InitMiddleware(e *echo.Echo) {
 
 	// CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"https://base.polypeye.cn"},
+		AllowOrigins:     []string{"https://base.polypeye.cn", "https://new.polypeye.cn"},
 		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
 		AllowHeaders:     []string{"Authorization", "Content-Type", "X-Csrf-Token", "Origin", "Accept"},
 		ExposeHeaders:    []string{"X-Csrf-Token"},

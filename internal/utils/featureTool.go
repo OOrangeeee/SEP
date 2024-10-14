@@ -15,6 +15,7 @@ type FeatureTool struct {
 
 func (ft *FeatureTool) Detect(source string) (string, error) {
 	uploadTool := UploadTool{}
+	sshPort := viper.GetString("feature.sshPort")
 	if viper.GetBool("feature.active") {
 		uuidTool := UUIDTool{}
 		uuid := uuidTool.GenerateUUID()
@@ -60,7 +61,7 @@ func (ft *FeatureTool) Detect(source string) (string, error) {
 		sshOpts := "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 		sshPass := fmt.Sprintf("sshpass -p '%s' ", sshSecret)
 
-		cmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p 27075 root@connect.yza1.seetacloud.com 'mkdir -p /services/images/%s'", sshOpts, uuid))
+		cmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p %s root@connect.yza1.seetacloud.com 'mkdir -p /services/images/%s'", sshOpts, sshPort, uuid))
 		if err := cmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -69,7 +70,7 @@ func (ft *FeatureTool) Detect(source string) (string, error) {
 			return "", err
 		}
 
-		scpCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -P 27075 %s root@connect.yza1.seetacloud.com:/services/images/%s/", sshOpts, source, uuid))
+		scpCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -P %s %s root@connect.yza1.seetacloud.com:/services/images/%s/", sshOpts, sshPort, source, uuid))
 		if err := scpCmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -78,7 +79,7 @@ func (ft *FeatureTool) Detect(source string) (string, error) {
 			return "", err
 		}
 
-		detectCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p 27075 root@connect.yza1.seetacloud.com '/root/miniconda3/bin/python3.9 /sep/ai/ai/Polyp_detection/detect.py --weights /sep/ai/ai/Polyp_detection/weights/best.pt --source /services/images/%s/%s'", sshOpts, uuid, filepath.Base(source)))
+		detectCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p %s root@connect.yza1.seetacloud.com '/root/miniconda3/bin/python3.9 /sep/ai/ai/Polyp_detection/detect.py --weights /sep/ai/ai/Polyp_detection/weights/best.pt --source /services/images/%s/%s'", sshOpts, sshPort, uuid, filepath.Base(source)))
 		if err := detectCmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -87,7 +88,7 @@ func (ft *FeatureTool) Detect(source string) (string, error) {
 			return "", err
 		}
 
-		downloadCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -r -P 27075 root@connect.yza1.seetacloud.com:/sep/ai/ai/Polyp_detection/runs/detect %s/", sshOpts, localDir))
+		downloadCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -r -P %s root@connect.yza1.seetacloud.com:/sep/ai/ai/Polyp_detection/runs/detect %s/", sshOpts, sshPort, localDir))
 		if err := downloadCmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -144,6 +145,7 @@ func (ft *FeatureTool) Detect(source string) (string, error) {
 
 func (ft *FeatureTool) Segment(source string) (string, error) {
 	uploadTool := UploadTool{}
+	sshPort := viper.GetString("feature.sshPort")
 	if viper.GetBool("feature.active") {
 		uuidTool := UUIDTool{}
 		uuid := uuidTool.GenerateUUID()
@@ -187,7 +189,7 @@ func (ft *FeatureTool) Segment(source string) (string, error) {
 		sshOpts := "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 		sshPass := fmt.Sprintf("sshpass -p '%s' ", sshSecret)
 
-		cmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p 27075 root@connect.yza1.seetacloud.com 'mkdir -p /services/images/%s'", sshOpts, uuid))
+		cmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p %s root@connect.yza1.seetacloud.com 'mkdir -p /services/images/%s'", sshOpts, sshPort, uuid))
 		if err := cmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -196,7 +198,7 @@ func (ft *FeatureTool) Segment(source string) (string, error) {
 			return "", err
 		}
 
-		scpCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -P 27075 %s root@connect.yza1.seetacloud.com:/services/images/%s/", sshOpts, source, uuid))
+		scpCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -P %s %s root@connect.yza1.seetacloud.com:/services/images/%s/", sshOpts, sshPort, source, uuid))
 		if err := scpCmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -205,7 +207,7 @@ func (ft *FeatureTool) Segment(source string) (string, error) {
 			return "", err
 		}
 
-		segmentCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p 27075 root@connect.yza1.seetacloud.com '/root/miniconda3/bin/python3.9 /sep/ai/ai/Polyp-PVT-main/run.py --model /sep/ai/ai/Polyp-PVT-main/model_pth/PolypPVT.pth --result /sep/ai/ai/Polyp-PVT-main/result/ --image /services/images/%s/%s'", sshOpts, uuid, filepath.Base(source)))
+		segmentCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p %s root@connect.yza1.seetacloud.com '/root/miniconda3/bin/python3.9 /sep/ai/ai/Polyp-PVT-main/run.py --model /sep/ai/ai/Polyp-PVT-main/model_pth/PolypPVT.pth --result /sep/ai/ai/Polyp-PVT-main/result/ --image /services/images/%s/%s'", sshOpts, sshPort, uuid, filepath.Base(source)))
 		if err := segmentCmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -214,7 +216,7 @@ func (ft *FeatureTool) Segment(source string) (string, error) {
 			return "", err
 		}
 
-		downloadCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -r -P 27075 root@connect.yza1.seetacloud.com:/sep/ai/ai/Polyp-PVT-main/result %s/", sshOpts, localDir))
+		downloadCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -r -P %s root@connect.yza1.seetacloud.com:/sep/ai/ai/Polyp-PVT-main/result %s/", sshOpts, sshPort, localDir))
 		if err := downloadCmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -281,6 +283,7 @@ func (ft *FeatureTool) Track(source string) (string, error) {
 	uploadTool := UploadTool{}
 	if viper.GetBool("feature.active") {
 		uuidTool := UUIDTool{}
+		sshPort := viper.GetString("feature.sshPort")
 		uuid := uuidTool.GenerateUUID()
 
 		// 获取原文件的扩展名
@@ -322,7 +325,7 @@ func (ft *FeatureTool) Track(source string) (string, error) {
 		sshOpts := "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 		sshPass := fmt.Sprintf("sshpass -p '%s' ", sshSecret)
 
-		cmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p 27075 root@connect.yza1.seetacloud.com 'mkdir -p /services/videos/%s'", sshOpts, uuid))
+		cmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p %s root@connect.yza1.seetacloud.com 'mkdir -p /services/videos/%s'", sshOpts, sshPort, uuid))
 		if err := cmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -331,7 +334,7 @@ func (ft *FeatureTool) Track(source string) (string, error) {
 			return "", err
 		}
 
-		scpCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -P 27075 %s root@connect.yza1.seetacloud.com:/services/videos/%s/", sshOpts, source, uuid))
+		scpCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -P %s %s root@connect.yza1.seetacloud.com:/services/videos/%s/", sshOpts, sshPort, source, uuid))
 		if err := scpCmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -340,7 +343,7 @@ func (ft *FeatureTool) Track(source string) (string, error) {
 			return "", err
 		}
 
-		trackCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p 27075 root@connect.yza1.seetacloud.com '/root/miniconda3/bin/python3.9 /sep/ai/ai/StrongSORT-YOLO-main/track_v5.py --yolo-weights /sep/ai/ai/StrongSORT-YOLO-main/weights/best.pt --device 0 --config-strongsort /sep/ai/ai/StrongSORT-YOLO-main/strong_sort/configs/strong_sort.yaml --save-vid --source /services/videos/%s/%s'", sshOpts, uuid, filepath.Base(source)))
+		trackCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("ssh %s -p %s root@connect.yza1.seetacloud.com '/root/miniconda3/bin/python3.9 /sep/ai/ai/StrongSORT-YOLO-main/track_v5.py --yolo-weights /sep/ai/ai/StrongSORT-YOLO-main/weights/best.pt --device 0 --config-strongsort /sep/ai/ai/StrongSORT-YOLO-main/strong_sort/configs/strong_sort.yaml --save-vid --source /services/videos/%s/%s'", sshOpts, sshPort, uuid, filepath.Base(source)))
 		if err := trackCmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
@@ -349,7 +352,7 @@ func (ft *FeatureTool) Track(source string) (string, error) {
 			return "", err
 		}
 
-		downloadCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -r -P 27075 root@connect.yza1.seetacloud.com:/sep/ai/ai/StrongSORT-YOLO-main/runs/track %s/", sshOpts, localDir))
+		downloadCmd := exec.Command("bash", "-c", sshPass+fmt.Sprintf("scp %s -r -P %s root@connect.yza1.seetacloud.com:/sep/ai/ai/StrongSORT-YOLO-main/runs/track %s/", sshOpts, sshPort, localDir))
 		if err := downloadCmd.Run(); err != nil {
 			Log.WithFields(logrus.Fields{
 				"error":         err,
