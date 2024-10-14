@@ -84,6 +84,15 @@ func InitMiddleware(e *echo.Echo, jwtSecret string) {
 		},
 		SigningKey:  jwtSecret,
 		TokenLookup: "header:Authorization:Bearer ",
+		ErrorHandler: func(c echo.Context, err error) error {
+			utils.Log.WithFields(logrus.Fields{
+				"error": err.Error(),
+				"jwtS":  jwtSecret,
+				"jwt":   c.Request().Header.Get("Authorization"),
+			}).Error("JWT validation failed")
+			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid or expired JWT")
+		},
+
 		SuccessHandler: func(c echo.Context) {
 			user := c.Get("user").(*jwt.Token)
 			claims, ok := user.Claims.(jwt.MapClaims)
