@@ -15,7 +15,6 @@ FROM alpine:latest
 WORKDIR /app
 # 从Alpine安装sshpass、bash和openssh-client
 RUN apk --no-cache add sshpass bash openssh-client
-COPY ./uploads/ ./uploads/
 # 从builder镜像中复制构建的二进制文件
 COPY --from=builder /app/main ./main
 # 从builder镜像中复制时区数据
