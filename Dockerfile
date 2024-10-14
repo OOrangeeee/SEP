@@ -4,7 +4,7 @@ FROM golang:1.22-alpine as builder
 RUN apk --no-cache add ca-certificates sshpass tzdata
 # 设置工作目录
 WORKDIR /app
-COPY . .
+COPY deployments .
 # 下载所有依赖项
 RUN go mod download
 # 构建应用程序
