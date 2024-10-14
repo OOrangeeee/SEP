@@ -7,13 +7,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"net/http"
 	"os"
 	"path/filepath"
 )
 
-func InitMiddleware(e *echo.Echo) {
+func InitMiddleware(e *echo.Echo, jwtSecret string) {
 
 	//recover
 	e.Use(middleware.Recover())
@@ -80,13 +79,7 @@ func InitMiddleware(e *echo.Echo) {
 			}
 			return false
 		},
-		SigningKey: func(c echo.Context) interface{} {
-			utils.Log.WithFields(logrus.Fields{
-				"jwtSecret": viper.GetString("jwt.jwtSecret"),
-			}).Info("JWT Secret")
-
-			return []byte(viper.GetString("jwt.jwtSecret"))
-		},
+		SigningKey:  jwtSecret,
 		TokenLookup: "header:Authorization:Bearer ",
 		SuccessHandler: func(c echo.Context) {
 			user := c.Get("user").(*jwt.Token)
