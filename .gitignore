@@ -42,8 +42,6 @@ package-lock.json
 web/node_modules/
 web/public/
 
-config.yaml
-
 vendor/
 
 ai/Polyp_detection/

@@ -1,0 +1,56 @@
+server:
+  port: 714
+  host: "https://111.cn"
+database:
+  dataBaseUserName: "postgres"
+  dataBasePassword: "bsbflsgxh.."
+  dataBaseIp: "db"
+  dataBasePort: "5432"
+  dataBaseName: "sep"
+email:
+  emailHost: "111"
+  emailPort: 111
+  emailUserName: "111"
+  emailPassword: "111"
+  emailFromNickname: "111"
+  emailOfRegister:
+    timeRange: 1
+    subject: "111"
+    body: 1
+Confirm:
+  return: 1
+info:
+  contactPhone: "1"
+  emailAddress: "1"
+  webSite: "1"
+jwt:
+  jwtSecret: "1"
+  admin:
+    adminSecret: "1"
+upload:
+  qiniu:
+    accessKey: "1"
+    secretKey : "1"
+    bucket : "1"
+    domain : "1"
+feature:
+  sshPort: 1
+  secret: 1
+  active: false
+  pythonPath: "1"
+  detect:
+    detectPath: "1"
+    weights: "1"
+    result: "1"
+  segment:
+    segmentPath: "1"
+    model: "1"
+    result: "1"
+  track:
+    trackPath: "1"
+    yolo-weights: "1"
+    device: 0
+    config-strongsort: "1"
+    result: "1"
+config:
+  token: "jcxnb0714"
