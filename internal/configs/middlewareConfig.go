@@ -7,12 +7,13 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"net/http"
 	"os"
 	"path/filepath"
 )
 
-func InitMiddleware(e *echo.Echo, jwtSecret string) {
+func InitMiddleware(e *echo.Echo) {
 
 	//recover
 	e.Use(middleware.Recover())
@@ -77,17 +78,16 @@ func InitMiddleware(e *echo.Echo, jwtSecret string) {
 			if (c.Path() == "/users" && c.Request().Method == "GET") || (c.Path() == "/users" && c.Request().Method == "DELETE") || (c.Path() == "/config" && c.Request().Method == "PUT") || (c.Path() == "/csrf-token" && c.Request().Method == "GET") || (c.Path() == "/users/account/activation/:activationCode" && c.Request().Method == "GET") || (c.Path() == "/users/account" && c.Request().Method == "POST") || (c.Path() == "/users/login" && c.Request().Method == "POST") {
 				return true
 			}
-			utils.Log.WithFields(logrus.Fields{
-				"jwtSecret": jwtSecret,
-			}).Info("JWT中间件启用")
 			return false
 		},
-		SigningKey:  []byte(jwtSecret),
+		SigningKey: func(c echo.Context) []byte {
+			return []byte(viper.GetString("jwt.jwtSecret"))
+		},
 		TokenLookup: "header:Authorization:Bearer ",
 		ErrorHandler: func(c echo.Context, err error) error {
 			utils.Log.WithFields(logrus.Fields{
 				"error": err.Error(),
-				"jwtS":  jwtSecret,
+				"jwtS":  viper.GetString("jwt.jwtSecret"),
 				"jwt":   c.Request().Header.Get("Authorization"),
 			}).Error("JWT validation failed")
 			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid or expired JWT")
