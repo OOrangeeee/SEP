@@ -82,7 +82,7 @@ func InitMiddleware(e *echo.Echo, jwtSecret string) {
 		},
 		SigningKey: func() []byte {
 			return []byte(viper.GetString("jwt.jwtSecret"))
-		},
+		}(),
 		TokenLookup: "header:Authorization:Bearer ",
 		ErrorHandler: func(c echo.Context, err error) error {
 			utils.Log.WithFields(logrus.Fields{
