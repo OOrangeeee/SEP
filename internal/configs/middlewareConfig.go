@@ -82,7 +82,7 @@ func InitMiddleware(e *echo.Echo, jwtSecret string) {
 			}).Info("JWT中间件启用")
 			return false
 		},
-		SigningKey:  jwtSecret,
+		SigningKey:  []byte(jwtSecret),
 		TokenLookup: "header:Authorization:Bearer ",
 		ErrorHandler: func(c echo.Context, err error) error {
 			utils.Log.WithFields(logrus.Fields{
