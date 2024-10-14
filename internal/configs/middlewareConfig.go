@@ -81,6 +81,10 @@ func InitMiddleware(e *echo.Echo) {
 			return false
 		},
 		SigningKey: func(c echo.Context) interface{} {
+			utils.Log.WithFields(logrus.Fields{
+				"jwtSecret": viper.GetString("jwt.jwtSecret"),
+			}).Info("JWT Secret")
+
 			return []byte(viper.GetString("jwt.jwtSecret"))
 		},
 		TokenLookup: "header:Authorization:Bearer ",
