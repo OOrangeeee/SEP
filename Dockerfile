@@ -24,6 +24,7 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 # 从builder镜像中复制配置和日志目录
 COPY --from=builder /app/configs/ ./configs/
 COPY --from=builder /app/logs/ ./logs/
+COPY --from=builder /app/uploads/ ./uploads/
 # 设置时区环境变量
 ENV TZ=Asia/Shanghai
 # 暴露端口
